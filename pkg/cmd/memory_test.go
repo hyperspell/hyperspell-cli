@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/stainless-sdks/hyperspell-cli/internal/mocktest"
-	"github.com/stainless-sdks/hyperspell-cli/internal/requestflag"
+	"github.com/hyperspell/hyperspell-cli/internal/mocktest"
+	"github.com/hyperspell/hyperspell-cli/internal/requestflag"
 )
 
 func TestMemoriesUpdate(t *testing.T) {

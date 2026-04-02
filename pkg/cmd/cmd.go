@@ -12,8 +12,8 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/stainless-sdks/hyperspell-cli/internal/autocomplete"
-	"github.com/stainless-sdks/hyperspell-cli/internal/requestflag"
+	"github.com/hyperspell/hyperspell-cli/internal/autocomplete"
+	"github.com/hyperspell/hyperspell-cli/internal/requestflag"
 	docs "github.com/urfave/cli-docs/v3"
 	"github.com/urfave/cli/v3"
 )
