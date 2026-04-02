@@ -1,4 +1,4 @@
-module github.com/stainless-sdks/hyperspell-cli
+module github.com/hyperspell/hyperspell-cli
 
 go 1.25
 

@@ -5,7 +5,7 @@ package cmd
 import (
 	"testing"
 
-	"github.com/stainless-sdks/hyperspell-cli/internal/mocktest"
+	"github.com/hyperspell/hyperspell-cli/internal/mocktest"
 )
 
 func TestSessionsAdd(t *testing.T) {
