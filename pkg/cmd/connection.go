@@ -1,0 +1,106 @@
+// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
+
+package cmd
+
+import (
+	"context"
+	"fmt"
+	"os"
+
+	"github.com/stainless-sdks/hyperspell-cli/internal/apiquery"
+	"github.com/stainless-sdks/hyperspell-cli/internal/requestflag"
+	"github.com/stainless-sdks/hyperspell-go"
+	"github.com/stainless-sdks/hyperspell-go/option"
+	"github.com/tidwall/gjson"
+	"github.com/urfave/cli/v3"
+)
+
+var connectionsList = cli.Command{
+	Name:            "list",
+	Usage:           "List all connections for the user.",
+	Suggest:         true,
+	Flags:           []cli.Flag{},
+	Action:          handleConnectionsList,
+	HideHelpCommand: true,
+}
+
+var connectionsRevoke = cli.Command{
+	Name:    "revoke",
+	Usage:   "Revokes Hyperspell's access the given provider and deletes all stored\ncredentials and indexed data.",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:     "connection-id",
+			Required: true,
+		},
+	},
+	Action:          handleConnectionsRevoke,
+	HideHelpCommand: true,
+}
+
+func handleConnectionsList(ctx context.Context, cmd *cli.Command) error {
+	client := hyperspell.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Connections.List(ctx, options...)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(os.Stdout, "connections list", obj, format, transform)
+}
+
+func handleConnectionsRevoke(ctx context.Context, cmd *cli.Command) error {
+	client := hyperspell.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("connection-id") && len(unusedArgs) > 0 {
+		cmd.Set("connection-id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Connections.Revoke(ctx, cmd.Value("connection-id").(string), options...)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(os.Stdout, "connections revoke", obj, format, transform)
+}
