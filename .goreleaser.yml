@@ -78,3 +78,19 @@ nfpms:
     contents:
       - src: man/man1/*.1.gz
         dst: /usr/share/man/man1/
+homebrew_casks:
+  - name: hyperspell
+    repository:
+      owner: hyperspell
+      name: homebrew-tools
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    homepage: https://hyperspell.com
+    description: Offical Hyperspell CLI to give agents memory and contect
+    license: MIT
+    binary: "hyperspell"
+    completions:
+      bash: "completions/hyperspell.bash"
+      zsh: "completions/hyperspell.zsh"
+      fish: "completions/hyperspell.fish"
+    manpages:
+    - man/man1/hyperspell.1.gz
