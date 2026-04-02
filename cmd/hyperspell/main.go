@@ -10,8 +10,8 @@ import (
 	"os"
 	"slices"
 
+	"github.com/hyperspell/hyperspell-go"
 	"github.com/stainless-sdks/hyperspell-cli/pkg/cmd"
-	"github.com/stainless-sdks/hyperspell-go"
 	"github.com/tidwall/gjson"
 	"github.com/urfave/cli/v3"
 )

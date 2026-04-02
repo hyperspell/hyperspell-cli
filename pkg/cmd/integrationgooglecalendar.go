@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/hyperspell/hyperspell-go"
+	"github.com/hyperspell/hyperspell-go/option"
 	"github.com/stainless-sdks/hyperspell-cli/internal/apiquery"
-	"github.com/stainless-sdks/hyperspell-go"
-	"github.com/stainless-sdks/hyperspell-go/option"
 	"github.com/tidwall/gjson"
 	"github.com/urfave/cli/v3"
 )
