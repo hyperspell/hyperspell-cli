@@ -15,7 +15,7 @@ on:
       - 'stl-preview-base/**'
 
 env:
-  GOPRIVATE: github.com/stainless-sdks/hyperspell-go
+  GOPRIVATE: github.com/hyperspell/hyperspell-go,github.com/stainless-sdks/hyperspell-go
 
 jobs:
   lint:

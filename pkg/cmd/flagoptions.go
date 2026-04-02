@@ -14,11 +14,11 @@ import (
 	"strings"
 	"unicode/utf8"
 
+	"github.com/hyperspell/hyperspell-go/option"
 	"github.com/stainless-sdks/hyperspell-cli/internal/apiform"
 	"github.com/stainless-sdks/hyperspell-cli/internal/apiquery"
 	"github.com/stainless-sdks/hyperspell-cli/internal/debugmiddleware"
 	"github.com/stainless-sdks/hyperspell-cli/internal/requestflag"
-	"github.com/stainless-sdks/hyperspell-go/option"
 
 	"github.com/goccy/go-yaml"
 	"github.com/urfave/cli/v3"

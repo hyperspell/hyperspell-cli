@@ -16,8 +16,8 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/hyperspell/hyperspell-go/option"
 	"github.com/stainless-sdks/hyperspell-cli/internal/jsonview"
-	"github.com/stainless-sdks/hyperspell-go/option"
 
 	"github.com/charmbracelet/x/term"
 	"github.com/itchyny/json2yaml"
