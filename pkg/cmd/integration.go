@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/hyperspell/hyperspell-cli/internal/apiquery"
+	"github.com/hyperspell/hyperspell-cli/internal/requestflag"
 	"github.com/hyperspell/hyperspell-go"
 	"github.com/hyperspell/hyperspell-go/option"
-	"github.com/stainless-sdks/hyperspell-cli/internal/apiquery"
-	"github.com/stainless-sdks/hyperspell-cli/internal/requestflag"
 	"github.com/tidwall/gjson"
 	"github.com/urfave/cli/v3"
 )
