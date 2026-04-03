@@ -371,11 +371,10 @@ var memoriesUpload = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:      "file",
-			Usage:     "The file to ingest.",
-			Required:  true,
-			BodyPath:  "file",
-			FileInput: true,
+			Name:     "file",
+			Usage:    "The file to ingest.",
+			Required: true,
+			BodyPath: "file",
 		},
 		&requestflag.Flag[any]{
 			Name:     "collection",

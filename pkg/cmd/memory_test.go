@@ -3,7 +3,6 @@
 package cmd
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/hyperspell/hyperspell-cli/internal/mocktest"
@@ -307,21 +306,18 @@ func TestMemoriesUpload(t *testing.T) {
 			"--api-key", "string",
 			"--user-id", "string",
 			"memories", "upload",
-			"--file", mocktest.TestFile(t, "Example data"),
+			"--file", "file",
 			"--collection", "collection",
 			"--metadata", "metadata",
 		)
 	})
 
 	t.Run("piping data", func(t *testing.T) {
-		testFile := mocktest.TestFile(t, "Example data")
 		// Test piping YAML data over stdin
-		pipeDataStr := "" +
-			"file: Example data\n" +
+		pipeData := []byte("" +
+			"file: file\n" +
 			"collection: collection\n" +
-			"metadata: metadata\n"
-		pipeDataStr = strings.ReplaceAll(pipeDataStr, "Example data", testFile)
-		pipeData := []byte(pipeDataStr)
+			"metadata: metadata\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
