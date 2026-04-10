@@ -141,7 +141,7 @@ var memoriesAdd = cli.Command{
 			Usage:    "Date of the document. Depending on the document, this could be the creation date or date the document was last updated (eg. for a chat transcript, this would be the date of the last message). This helps the ranking algorithm and allows you to filter by date range.",
 			BodyPath: "date",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[map[string]any]{
 			Name:     "metadata",
 			Usage:    "Custom metadata for filtering. Keys must be alphanumeric with underscores, max 64 chars. Values must be string, number, boolean, or null.",
 			BodyPath: "metadata",
@@ -192,7 +192,7 @@ var memoriesAddBulk = requestflag.WithInnerFlags(cli.Command{
 			Usage:      "Date of the document. Depending on the document, this could be the creation date or date the document was last updated (eg. for a chat transcript, this would be the date of the last message). This helps the ranking algorithm and allows you to filter by date range.",
 			InnerField: "date",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[map[string]any]{
 			Name:       "item.metadata",
 			Usage:      "Custom metadata for filtering. Keys must be alphanumeric with underscores, max 64 chars. Values must be string, number, boolean, or null.",
 			InnerField: "metadata",
@@ -293,7 +293,7 @@ var memoriesSearch = requestflag.WithInnerFlags(cli.Command{
 			Usage:      "Search options for Box",
 			InnerField: "box",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[map[string]any]{
 			Name:       "options.filter",
 			Usage:      "Metadata filters using MongoDB-style operators. Example: {'status': 'published', 'priority': {'$gt': 3}}",
 			InnerField: "filter",
