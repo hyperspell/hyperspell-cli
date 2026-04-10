@@ -42,7 +42,7 @@ var sessionsAdd = cli.Command{
 			Usage:    "Trace format: 'vercel', 'hyperdoc', or 'openclaw'. Auto-detected if not set.",
 			BodyPath: "format",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[map[string]any]{
 			Name:     "metadata",
 			Usage:    "Custom metadata for filtering. Keys must be alphanumeric with underscores, max 64 chars.",
 			BodyPath: "metadata",
