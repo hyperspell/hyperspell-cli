@@ -83,25 +83,27 @@ func TestMemoriesAdd(t *testing.T) {
 			"--api-key", "string",
 			"--user-id", "string",
 			"memories", "add",
-			"--text", "text",
-			"--collection", "collection",
+			"--text", "...",
+			"--collection", "my-collection",
 			"--date", "'2019-12-27T18:11:19.117Z'",
-			"--metadata", "{foo: string}",
+			"--metadata", "{author: John Doe, date: '2025-05-20T02:31:00Z', rating: 3}",
 			"--resource-id", "resource_id",
-			"--title", "title",
+			"--title", "My Document",
 		)
 	})
 
 	t.Run("piping data", func(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
-			"text: text\n" +
-			"collection: collection\n" +
+			"text: ...\n" +
+			"collection: my-collection\n" +
 			"date: '2019-12-27T18:11:19.117Z'\n" +
 			"metadata:\n" +
-			"  foo: string\n" +
+			"  author: John Doe\n" +
+			"  date: '2025-05-20T02:31:00Z'\n" +
+			"  rating: 3\n" +
 			"resource_id: resource_id\n" +
-			"title: title\n")
+			"title: My Document\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
@@ -183,12 +185,12 @@ func TestMemoriesSearch(t *testing.T) {
 			"--api-key", "string",
 			"--user-id", "string",
 			"memories", "search",
-			"--query", "query",
+			"--query", "What does Hyperspell do?",
 			"--answer=true",
 			"--effort", "0",
 			"--max-results", "0",
-			"--options", "{after: '2019-12-27T18:11:19.117Z', answer_model: llama-3.1, before: '2019-12-27T18:11:19.117Z', box: {weight: 0}, filter: {foo: bar}, google_calendar: {calendar_id: calendar_id, weight: 0}, google_drive: {weight: 0}, google_mail: {label_ids: [string], weight: 0}, max_results: 200, memory_types: [procedure], notion: {notion_page_ids: [string], weight: 0}, reddit: {period: hour, sort: relevance, subreddit: subreddit, weight: 0}, resource_ids: [string], slack: {channels: [string], exclude_archived: true, include_dms: true, include_group_dms: true, include_private: true, weight: 0}, vault: {weight: 0}, web_crawler: {max_depth: 0, url: url, weight: 0}}",
-			"--source", "reddit",
+			"--options", "{after: '2019-12-27T18:11:19.117Z', answer_model: llama-3.1, before: '2019-12-27T18:11:19.117Z', box: {weight: 0}, filter: {}, google_calendar: {calendar_id: calendar_id, weight: 0}, google_drive: {weight: 0}, google_mail: {label_ids: [string], weight: 0}, max_results: 200, memory_types: [procedure], notion: {notion_page_ids: [string], weight: 0}, reddit: {period: hour, sort: relevance, subreddit: subreddit, weight: 0}, resource_ids: [string], slack: {channels: [string], exclude_archived: true, include_dms: true, include_group_dms: true, include_private: true, weight: 0}, vault: {weight: 0}, web_crawler: {max_depth: 0, url: url, weight: 0}}",
+			"--source", "vault",
 		)
 	})
 
@@ -202,7 +204,7 @@ func TestMemoriesSearch(t *testing.T) {
 			"--api-key", "string",
 			"--user-id", "string",
 			"memories", "search",
-			"--query", "query",
+			"--query", "What does Hyperspell do?",
 			"--answer=true",
 			"--effort", "0",
 			"--max-results", "0",
@@ -210,7 +212,7 @@ func TestMemoriesSearch(t *testing.T) {
 			"--options.answer-model", "llama-3.1",
 			"--options.before", "2019-12-27T18:11:19.117Z",
 			"--options.box", "{weight: 0}",
-			"--options.filter", "{foo: bar}",
+			"--options.filter", "{}",
 			"--options.google-calendar", "{calendar_id: calendar_id, weight: 0}",
 			"--options.google-drive", "{weight: 0}",
 			"--options.google-mail", "{label_ids: [string], weight: 0}",
@@ -222,14 +224,14 @@ func TestMemoriesSearch(t *testing.T) {
 			"--options.slack", "{channels: [string], exclude_archived: true, include_dms: true, include_group_dms: true, include_private: true, weight: 0}",
 			"--options.vault", "{weight: 0}",
 			"--options.web-crawler", "{max_depth: 0, url: url, weight: 0}",
-			"--source", "reddit",
+			"--source", "vault",
 		)
 	})
 
 	t.Run("piping data", func(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
-			"query: query\n" +
+			"query: What does Hyperspell do?\n" +
 			"answer: true\n" +
 			"effort: 0\n" +
 			"max_results: 0\n" +
@@ -239,8 +241,7 @@ func TestMemoriesSearch(t *testing.T) {
 			"  before: '2019-12-27T18:11:19.117Z'\n" +
 			"  box:\n" +
 			"    weight: 0\n" +
-			"  filter:\n" +
-			"    foo: bar\n" +
+			"  filter: {}\n" +
 			"  google_calendar:\n" +
 			"    calendar_id: calendar_id\n" +
 			"    weight: 0\n" +
@@ -279,7 +280,7 @@ func TestMemoriesSearch(t *testing.T) {
 			"    url: url\n" +
 			"    weight: 0\n" +
 			"sources:\n" +
-			"  - reddit\n")
+			"  - vault\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
