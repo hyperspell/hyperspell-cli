@@ -105,8 +105,9 @@ func handleEvaluateGetQuery(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "evaluate get-query", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "evaluate get-query", obj, format, explicitFormat, transform)
 }
 
 func handleEvaluateScoreHighlight(ctx context.Context, cmd *cli.Command) error {
@@ -147,8 +148,9 @@ func handleEvaluateScoreHighlight(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "evaluate score-highlight", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "evaluate score-highlight", obj, format, explicitFormat, transform)
 }
 
 func handleEvaluateScoreQuery(ctx context.Context, cmd *cli.Command) error {
@@ -189,6 +191,7 @@ func handleEvaluateScoreQuery(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "evaluate score-query", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "evaluate score-query", obj, format, explicitFormat, transform)
 }
