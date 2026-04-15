@@ -70,8 +70,9 @@ func handleIntegrationsList(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "integrations list", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "integrations list", obj, format, explicitFormat, transform)
 }
 
 func handleIntegrationsConnect(ctx context.Context, cmd *cli.Command) error {
@@ -112,6 +113,7 @@ func handleIntegrationsConnect(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "integrations connect", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "integrations connect", obj, format, explicitFormat, transform)
 }

@@ -145,8 +145,9 @@ func handleFoldersList(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "folders list", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "folders list", obj, format, explicitFormat, transform)
 }
 
 func handleFoldersDeletePolicy(ctx context.Context, cmd *cli.Command) error {
@@ -189,8 +190,9 @@ func handleFoldersDeletePolicy(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "folders delete-policy", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "folders delete-policy", obj, format, explicitFormat, transform)
 }
 
 func handleFoldersListPolicies(ctx context.Context, cmd *cli.Command) error {
@@ -224,8 +226,9 @@ func handleFoldersListPolicies(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "folders list-policies", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "folders list-policies", obj, format, explicitFormat, transform)
 }
 
 func handleFoldersSetPolicies(ctx context.Context, cmd *cli.Command) error {
@@ -266,6 +269,7 @@ func handleFoldersSetPolicies(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "folders set-policies", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "folders set-policies", obj, format, explicitFormat, transform)
 }

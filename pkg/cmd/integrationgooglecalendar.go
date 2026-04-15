@@ -51,6 +51,7 @@ func handleIntegrationsGoogleCalendarList(ctx context.Context, cmd *cli.Command)
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "integrations:google-calendar list", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "integrations:google-calendar list", obj, format, explicitFormat, transform)
 }

@@ -66,8 +66,9 @@ func handleConnectionsList(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "connections list", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "connections list", obj, format, explicitFormat, transform)
 }
 
 func handleConnectionsRevoke(ctx context.Context, cmd *cli.Command) error {
@@ -101,6 +102,7 @@ func handleConnectionsRevoke(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "connections revoke", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "connections revoke", obj, format, explicitFormat, transform)
 }

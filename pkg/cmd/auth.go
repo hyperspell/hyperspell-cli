@@ -86,8 +86,9 @@ func handleAuthDeleteUser(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "auth delete-user", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "auth delete-user", obj, format, explicitFormat, transform)
 }
 
 func handleAuthMe(ctx context.Context, cmd *cli.Command) error {
@@ -118,8 +119,9 @@ func handleAuthMe(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "auth me", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "auth me", obj, format, explicitFormat, transform)
 }
 
 func handleAuthUserToken(ctx context.Context, cmd *cli.Command) error {
@@ -152,6 +154,7 @@ func handleAuthUserToken(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "auth user-token", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "auth user-token", obj, format, explicitFormat, transform)
 }
