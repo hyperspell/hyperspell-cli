@@ -21,7 +21,7 @@ var memoriesUpdate = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:     "source",
-			Usage:    `Allowed values: "reddit", "notion", "slack", "google_calendar", "google_mail", "box", "dropbox", "google_drive", "github", "vault", "web_crawler", "trace", "microsoft_teams", "gmail_actions".`,
+			Usage:    `Allowed values: "reddit", "notion", "slack", "google_calendar", "google_mail", "box", "dropbox", "github", "google_drive", "vault", "web_crawler", "trace", "microsoft_teams", "gmail_actions".`,
 			Required: true,
 		},
 		&requestflag.Flag[string]{
@@ -107,7 +107,7 @@ var memoriesDelete = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:     "source",
-			Usage:    `Allowed values: "reddit", "notion", "slack", "google_calendar", "google_mail", "box", "dropbox", "google_drive", "github", "vault", "web_crawler", "trace", "microsoft_teams", "gmail_actions".`,
+			Usage:    `Allowed values: "reddit", "notion", "slack", "google_calendar", "google_mail", "box", "dropbox", "github", "google_drive", "vault", "web_crawler", "trace", "microsoft_teams", "gmail_actions".`,
 			Required: true,
 		},
 		&requestflag.Flag[string]{
@@ -216,7 +216,7 @@ var memoriesGet = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:     "source",
-			Usage:    `Allowed values: "reddit", "notion", "slack", "google_calendar", "google_mail", "box", "dropbox", "google_drive", "github", "vault", "web_crawler", "trace", "microsoft_teams", "gmail_actions".`,
+			Usage:    `Allowed values: "reddit", "notion", "slack", "google_calendar", "google_mail", "box", "dropbox", "github", "google_drive", "vault", "web_crawler", "trace", "microsoft_teams", "gmail_actions".`,
 			Required: true,
 		},
 		&requestflag.Flag[string]{
