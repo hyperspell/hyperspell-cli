@@ -5,7 +5,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/hyperspell/hyperspell-cli/internal/apiquery"
 	"github.com/hyperspell/hyperspell-cli/internal/requestflag"
@@ -123,7 +122,12 @@ func handleActionsAddReaction(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "actions add-reaction", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "actions add-reaction",
+		Transform:      transform,
+	})
 }
 
 func handleActionsSendMessage(ctx context.Context, cmd *cli.Command) error {
@@ -158,5 +162,10 @@ func handleActionsSendMessage(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "actions send-message", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "actions send-message",
+		Transform:      transform,
+	})
 }

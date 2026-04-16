@@ -5,7 +5,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/hyperspell/hyperspell-cli/internal/apiquery"
 	"github.com/hyperspell/hyperspell-cli/internal/requestflag"
@@ -107,7 +106,12 @@ func handleEvaluateGetQuery(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "evaluate get-query", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "evaluate get-query",
+		Transform:      transform,
+	})
 }
 
 func handleEvaluateScoreHighlight(ctx context.Context, cmd *cli.Command) error {
@@ -150,7 +154,12 @@ func handleEvaluateScoreHighlight(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "evaluate score-highlight", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "evaluate score-highlight",
+		Transform:      transform,
+	})
 }
 
 func handleEvaluateScoreQuery(ctx context.Context, cmd *cli.Command) error {
@@ -193,5 +202,10 @@ func handleEvaluateScoreQuery(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "evaluate score-query", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "evaluate score-query",
+		Transform:      transform,
+	})
 }

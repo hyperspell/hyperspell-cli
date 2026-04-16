@@ -5,7 +5,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/hyperspell/hyperspell-cli/internal/apiquery"
 	"github.com/hyperspell/hyperspell-cli/internal/requestflag"
@@ -434,7 +433,12 @@ func handleMemoriesUpdate(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "memories update", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "memories update",
+		Transform:      transform,
+	})
 }
 
 func handleMemoriesList(ctx context.Context, cmd *cli.Command) error {
@@ -469,14 +473,24 @@ func handleMemoriesList(ctx context.Context, cmd *cli.Command) error {
 			return err
 		}
 		obj := gjson.ParseBytes(res)
-		return ShowJSON(os.Stdout, os.Stderr, "memories list", obj, format, explicitFormat, transform)
+		return ShowJSON(obj, ShowJSONOpts{
+			ExplicitFormat: explicitFormat,
+			Format:         format,
+			Title:          "memories list",
+			Transform:      transform,
+		})
 	} else {
 		iter := client.Memories.ListAutoPaging(ctx, params, options...)
 		maxItems := int64(-1)
 		if cmd.IsSet("max-items") {
 			maxItems = cmd.Value("max-items").(int64)
 		}
-		return ShowJSONIterator(os.Stdout, os.Stderr, "memories list", iter, format, explicitFormat, transform, maxItems)
+		return ShowJSONIterator(iter, maxItems, ShowJSONOpts{
+			ExplicitFormat: explicitFormat,
+			Format:         format,
+			Title:          "memories list",
+			Transform:      transform,
+		})
 	}
 }
 
@@ -522,7 +536,12 @@ func handleMemoriesDelete(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "memories delete", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "memories delete",
+		Transform:      transform,
+	})
 }
 
 func handleMemoriesAdd(ctx context.Context, cmd *cli.Command) error {
@@ -557,7 +576,12 @@ func handleMemoriesAdd(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "memories add", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "memories add",
+		Transform:      transform,
+	})
 }
 
 func handleMemoriesAddBulk(ctx context.Context, cmd *cli.Command) error {
@@ -592,7 +616,12 @@ func handleMemoriesAddBulk(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "memories add-bulk", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "memories add-bulk",
+		Transform:      transform,
+	})
 }
 
 func handleMemoriesGet(ctx context.Context, cmd *cli.Command) error {
@@ -637,7 +666,12 @@ func handleMemoriesGet(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "memories get", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "memories get",
+		Transform:      transform,
+	})
 }
 
 func handleMemoriesSearch(ctx context.Context, cmd *cli.Command) error {
@@ -672,7 +706,12 @@ func handleMemoriesSearch(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "memories search", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "memories search",
+		Transform:      transform,
+	})
 }
 
 func handleMemoriesStatus(ctx context.Context, cmd *cli.Command) error {
@@ -705,7 +744,12 @@ func handleMemoriesStatus(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "memories status", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "memories status",
+		Transform:      transform,
+	})
 }
 
 func handleMemoriesUpload(ctx context.Context, cmd *cli.Command) error {
@@ -740,5 +784,10 @@ func handleMemoriesUpload(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "memories upload", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "memories upload",
+		Transform:      transform,
+	})
 }

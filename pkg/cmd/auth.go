@@ -5,7 +5,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/hyperspell/hyperspell-cli/internal/apiquery"
 	"github.com/hyperspell/hyperspell-cli/internal/requestflag"
@@ -88,7 +87,12 @@ func handleAuthDeleteUser(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "auth delete-user", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "auth delete-user",
+		Transform:      transform,
+	})
 }
 
 func handleAuthMe(ctx context.Context, cmd *cli.Command) error {
@@ -121,7 +125,12 @@ func handleAuthMe(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "auth me", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "auth me",
+		Transform:      transform,
+	})
 }
 
 func handleAuthUserToken(ctx context.Context, cmd *cli.Command) error {
@@ -156,5 +165,10 @@ func handleAuthUserToken(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "auth user-token", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "auth user-token",
+		Transform:      transform,
+	})
 }

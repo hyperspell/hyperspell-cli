@@ -5,7 +5,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/hyperspell/hyperspell-cli/internal/apiquery"
 	"github.com/hyperspell/hyperspell-cli/internal/requestflag"
@@ -72,7 +71,12 @@ func handleIntegrationsList(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "integrations list", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "integrations list",
+		Transform:      transform,
+	})
 }
 
 func handleIntegrationsConnect(ctx context.Context, cmd *cli.Command) error {
@@ -115,5 +119,10 @@ func handleIntegrationsConnect(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "integrations connect", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "integrations connect",
+		Transform:      transform,
+	})
 }
