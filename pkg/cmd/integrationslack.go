@@ -88,6 +88,7 @@ func handleIntegrationsSlackList(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "integrations:slack list",
 		Transform:      transform,
 	})

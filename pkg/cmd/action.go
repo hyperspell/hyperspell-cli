@@ -125,6 +125,7 @@ func handleActionsAddReaction(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "actions add-reaction",
 		Transform:      transform,
 	})
@@ -165,6 +166,7 @@ func handleActionsSendMessage(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "actions send-message",
 		Transform:      transform,
 	})

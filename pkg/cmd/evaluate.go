@@ -109,6 +109,7 @@ func handleEvaluateGetQuery(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "evaluate get-query",
 		Transform:      transform,
 	})
@@ -157,6 +158,7 @@ func handleEvaluateScoreHighlight(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "evaluate score-highlight",
 		Transform:      transform,
 	})
@@ -205,6 +207,7 @@ func handleEvaluateScoreQuery(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "evaluate score-query",
 		Transform:      transform,
 	})

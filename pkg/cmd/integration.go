@@ -74,6 +74,7 @@ func handleIntegrationsList(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "integrations list",
 		Transform:      transform,
 	})
@@ -122,6 +123,7 @@ func handleIntegrationsConnect(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "integrations connect",
 		Transform:      transform,
 	})

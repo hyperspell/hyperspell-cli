@@ -77,6 +77,7 @@ func handleIntegrationsWebCrawlerIndex(ctx context.Context, cmd *cli.Command) er
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "integrations:web-crawler index",
 		Transform:      transform,
 	})
