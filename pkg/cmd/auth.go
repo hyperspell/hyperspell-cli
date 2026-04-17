@@ -90,6 +90,7 @@ func handleAuthDeleteUser(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "auth delete-user",
 		Transform:      transform,
 	})
@@ -128,6 +129,7 @@ func handleAuthMe(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "auth me",
 		Transform:      transform,
 	})
@@ -168,6 +170,7 @@ func handleAuthUserToken(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "auth user-token",
 		Transform:      transform,
 	})

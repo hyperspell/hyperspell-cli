@@ -149,6 +149,7 @@ func handleFoldersList(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "folders list",
 		Transform:      transform,
 	})
@@ -199,6 +200,7 @@ func handleFoldersDeletePolicy(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "folders delete-policy",
 		Transform:      transform,
 	})
@@ -240,6 +242,7 @@ func handleFoldersListPolicies(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "folders list-policies",
 		Transform:      transform,
 	})
@@ -288,6 +291,7 @@ func handleFoldersSetPolicies(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "folders set-policies",
 		Transform:      transform,
 	})
