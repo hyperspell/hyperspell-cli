@@ -35,6 +35,12 @@ var memoriesUpdate = cli.Command{
 			BodyPath: "collection",
 		},
 		&requestflag.Flag[any]{
+			Name:     "date",
+			Usage:    "Date of the document for ranking and filtering.",
+			Default:  map[string]any{},
+			BodyPath: "date",
+		},
+		&requestflag.Flag[any]{
 			Name:     "metadata",
 			Usage:    "Custom metadata for filtering. Keys must be alphanumeric with underscores, max 64 chars. Values must be string, number, boolean, or null. Will be merged with existing metadata.",
 			Default:  map[string]any{},

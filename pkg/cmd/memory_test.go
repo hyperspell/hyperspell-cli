@@ -20,6 +20,7 @@ func TestMemoriesUpdate(t *testing.T) {
 			"--source", "reddit",
 			"--resource-id", "resource_id",
 			"--collection", "string",
+			"--date", "'2019-12-27T18:11:19.117Z'",
 			"--metadata", "{foo: string}",
 			"--text", "string",
 			"--title", "string",
@@ -30,6 +31,7 @@ func TestMemoriesUpdate(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
 			"collection: string\n" +
+			"date: '2019-12-27T18:11:19.117Z'\n" +
 			"metadata:\n" +
 			"  foo: string\n" +
 			"text: string\n" +
