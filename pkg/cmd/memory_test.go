@@ -191,7 +191,7 @@ func TestMemoriesSearch(t *testing.T) {
 			"--answer=true",
 			"--effort", "0",
 			"--max-results", "0",
-			"--options", "{after: '2019-12-27T18:11:19.117Z', answer_model: llama-3.1, before: '2019-12-27T18:11:19.117Z', box: {weight: 0}, filter: {}, google_calendar: {calendar_id: calendar_id, weight: 0}, google_drive: {weight: 0}, google_mail: {label_ids: [string], weight: 0}, max_results: 200, memory_types: [procedure], notion: {notion_page_ids: [string], weight: 0}, reddit: {period: hour, sort: relevance, subreddit: subreddit, weight: 0}, resource_ids: [string], slack: {channels: [string], exclude_archived: true, include_dms: true, include_group_dms: true, include_private: true, weight: 0}, vault: {weight: 0}, web_crawler: {max_depth: 0, url: url, weight: 0}}",
+			"--options", "{after: '2019-12-27T18:11:19.117Z', answer_model: llama-3.1, before: '2019-12-27T18:11:19.117Z', box: {weight: 0}, filter: {}, google_calendar: {calendar_id: calendar_id, weight: 0}, google_drive: {weight: 0}, google_mail: {label_ids: [string], weight: 0}, max_results: 200, memory_types: [procedure], notion: {notion_page_ids: [string], weight: 0}, recency_half_life_days: 1, reddit: {period: hour, sort: relevance, subreddit: subreddit, weight: 0}, resource_ids: [string], slack: {channels: [string], exclude_archived: true, include_dms: true, include_group_dms: true, include_private: true, weight: 0}, vault: {weight: 0}, web_crawler: {max_depth: 0, url: url, weight: 0}}",
 			"--source", "vault",
 		)
 	})
@@ -221,6 +221,7 @@ func TestMemoriesSearch(t *testing.T) {
 			"--options.max-results", "200",
 			"--options.memory-types", "[procedure]",
 			"--options.notion", "{notion_page_ids: [string], weight: 0}",
+			"--options.recency-half-life-days", "1",
 			"--options.reddit", "{period: hour, sort: relevance, subreddit: subreddit, weight: 0}",
 			"--options.resource-ids", "[string]",
 			"--options.slack", "{channels: [string], exclude_archived: true, include_dms: true, include_group_dms: true, include_private: true, weight: 0}",
@@ -260,6 +261,7 @@ func TestMemoriesSearch(t *testing.T) {
 			"    notion_page_ids:\n" +
 			"      - string\n" +
 			"    weight: 0\n" +
+			"  recency_half_life_days: 1\n" +
 			"  reddit:\n" +
 			"    period: hour\n" +
 			"    sort: relevance\n" +

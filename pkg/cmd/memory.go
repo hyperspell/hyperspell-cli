@@ -333,6 +333,11 @@ var memoriesSearch = requestflag.WithInnerFlags(cli.Command{
 			Usage:      "Search options for Notion",
 			InnerField: "notion",
 		},
+		&requestflag.InnerFlag[any]{
+			Name:       "options.recency-half-life-days",
+			Usage:      "When set, multiplies each result's score by an exponential-decay factor based on the document's most recent activity timestamp (source-reported last_modified, falling back to document_date). A document one half-life old gets its score halved. Resources with no recency timestamp are passed through unchanged. Leave unset to disable.",
+			InnerField: "recency_half_life_days",
+		},
 		&requestflag.InnerFlag[map[string]any]{
 			Name:       "options.reddit",
 			Usage:      "Search options for Reddit",
