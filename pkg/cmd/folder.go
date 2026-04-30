@@ -20,8 +20,9 @@ var foldersList = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "connection-id",
-			Required: true,
+			Name:      "connection-id",
+			Required:  true,
+			PathParam: "connection_id",
 		},
 		&requestflag.Flag[*string]{
 			Name:      "parent-id",
@@ -39,12 +40,14 @@ var foldersDeletePolicy = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "connection-id",
-			Required: true,
+			Name:      "connection-id",
+			Required:  true,
+			PathParam: "connection_id",
 		},
 		&requestflag.Flag[string]{
-			Name:     "policy-id",
-			Required: true,
+			Name:      "policy-id",
+			Required:  true,
+			PathParam: "policy_id",
 		},
 	},
 	Action:          handleFoldersDeletePolicy,
@@ -57,8 +60,9 @@ var foldersListPolicies = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "connection-id",
-			Required: true,
+			Name:      "connection-id",
+			Required:  true,
+			PathParam: "connection_id",
 		},
 	},
 	Action:          handleFoldersListPolicies,
@@ -71,8 +75,9 @@ var foldersSetPolicies = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "connection-id",
-			Required: true,
+			Name:      "connection-id",
+			Required:  true,
+			PathParam: "connection_id",
 		},
 		&requestflag.Flag[string]{
 			Name:     "provider-folder-id",
@@ -117,8 +122,6 @@ func handleFoldersList(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.FolderListParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -129,6 +132,8 @@ func handleFoldersList(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := hyperspell.FolderListParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -166,10 +171,6 @@ func handleFoldersDeletePolicy(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.FolderDeletePolicyParams{
-		ConnectionID: cmd.Value("connection-id").(string),
-	}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -179,6 +180,10 @@ func handleFoldersDeletePolicy(ctx context.Context, cmd *cli.Command) error {
 	)
 	if err != nil {
 		return err
+	}
+
+	params := hyperspell.FolderDeletePolicyParams{
+		ConnectionID: cmd.Value("connection-id").(string),
 	}
 
 	var res []byte
@@ -259,8 +264,6 @@ func handleFoldersSetPolicies(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.FolderSetPoliciesParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -271,6 +274,8 @@ func handleFoldersSetPolicies(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := hyperspell.FolderSetPoliciesParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))

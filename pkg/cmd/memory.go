@@ -20,13 +20,15 @@ var memoriesUpdate = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "source",
-			Usage:    `Allowed values: "reddit", "notion", "slack", "google_calendar", "google_mail", "box", "dropbox", "github", "google_drive", "vault", "web_crawler", "trace", "microsoft_teams", "gmail_actions".`,
-			Required: true,
+			Name:      "source",
+			Usage:     `Allowed values: "reddit", "notion", "slack", "google_calendar", "google_mail", "box", "dropbox", "github", "google_drive", "vault", "web_crawler", "trace", "microsoft_teams", "gmail_actions".`,
+			Required:  true,
+			PathParam: "source",
 		},
 		&requestflag.Flag[string]{
-			Name:     "resource-id",
-			Required: true,
+			Name:      "resource-id",
+			Required:  true,
+			PathParam: "resource_id",
 		},
 		&requestflag.Flag[any]{
 			Name:     "collection",
@@ -112,13 +114,15 @@ var memoriesDelete = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "source",
-			Usage:    `Allowed values: "reddit", "notion", "slack", "google_calendar", "google_mail", "box", "dropbox", "github", "google_drive", "vault", "web_crawler", "trace", "microsoft_teams", "gmail_actions".`,
-			Required: true,
+			Name:      "source",
+			Usage:     `Allowed values: "reddit", "notion", "slack", "google_calendar", "google_mail", "box", "dropbox", "github", "google_drive", "vault", "web_crawler", "trace", "microsoft_teams", "gmail_actions".`,
+			Required:  true,
+			PathParam: "source",
 		},
 		&requestflag.Flag[string]{
-			Name:     "resource-id",
-			Required: true,
+			Name:      "resource-id",
+			Required:  true,
+			PathParam: "resource_id",
 		},
 	},
 	Action:          handleMemoriesDelete,
@@ -221,13 +225,15 @@ var memoriesGet = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "source",
-			Usage:    `Allowed values: "reddit", "notion", "slack", "google_calendar", "google_mail", "box", "dropbox", "github", "google_drive", "vault", "web_crawler", "trace", "microsoft_teams", "gmail_actions".`,
-			Required: true,
+			Name:      "source",
+			Usage:     `Allowed values: "reddit", "notion", "slack", "google_calendar", "google_mail", "box", "dropbox", "github", "google_drive", "vault", "web_crawler", "trace", "microsoft_teams", "gmail_actions".`,
+			Required:  true,
+			PathParam: "source",
 		},
 		&requestflag.Flag[string]{
-			Name:     "resource-id",
-			Required: true,
+			Name:      "resource-id",
+			Required:  true,
+			PathParam: "resource_id",
 		},
 	},
 	Action:          handleMemoriesGet,
@@ -413,10 +419,6 @@ func handleMemoriesUpdate(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.MemoryUpdateParams{
-		Source: hyperspell.MemoryUpdateParamsSource(cmd.Value("source").(string)),
-	}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -426,6 +428,10 @@ func handleMemoriesUpdate(ctx context.Context, cmd *cli.Command) error {
 	)
 	if err != nil {
 		return err
+	}
+
+	params := hyperspell.MemoryUpdateParams{
+		Source: hyperspell.MemoryUpdateParamsSource(cmd.Value("source").(string)),
 	}
 
 	var res []byte
@@ -461,8 +467,6 @@ func handleMemoriesList(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.MemoryListParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -473,6 +477,8 @@ func handleMemoriesList(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := hyperspell.MemoryListParams{}
 
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
@@ -519,10 +525,6 @@ func handleMemoriesDelete(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.MemoryDeleteParams{
-		Source: hyperspell.MemoryDeleteParamsSource(cmd.Value("source").(string)),
-	}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -532,6 +534,10 @@ func handleMemoriesDelete(ctx context.Context, cmd *cli.Command) error {
 	)
 	if err != nil {
 		return err
+	}
+
+	params := hyperspell.MemoryDeleteParams{
+		Source: hyperspell.MemoryDeleteParamsSource(cmd.Value("source").(string)),
 	}
 
 	var res []byte
@@ -567,8 +573,6 @@ func handleMemoriesAdd(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.MemoryAddParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -579,6 +583,8 @@ func handleMemoriesAdd(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := hyperspell.MemoryAddParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -608,8 +614,6 @@ func handleMemoriesAddBulk(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.MemoryAddBulkParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -620,6 +624,8 @@ func handleMemoriesAddBulk(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := hyperspell.MemoryAddBulkParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -652,10 +658,6 @@ func handleMemoriesGet(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.MemoryGetParams{
-		Source: hyperspell.MemoryGetParamsSource(cmd.Value("source").(string)),
-	}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -665,6 +667,10 @@ func handleMemoriesGet(ctx context.Context, cmd *cli.Command) error {
 	)
 	if err != nil {
 		return err
+	}
+
+	params := hyperspell.MemoryGetParams{
+		Source: hyperspell.MemoryGetParamsSource(cmd.Value("source").(string)),
 	}
 
 	var res []byte
@@ -700,8 +706,6 @@ func handleMemoriesSearch(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.MemorySearchParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -712,6 +716,8 @@ func handleMemoriesSearch(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := hyperspell.MemorySearchParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -780,8 +786,6 @@ func handleMemoriesUpload(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.MemoryUploadParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -792,6 +796,8 @@ func handleMemoriesUpload(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := hyperspell.MemoryUploadParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))

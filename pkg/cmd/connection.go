@@ -29,8 +29,9 @@ var connectionsRevoke = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "connection-id",
-			Required: true,
+			Name:      "connection-id",
+			Required:  true,
+			PathParam: "connection_id",
 		},
 	},
 	Action:          handleConnectionsRevoke,

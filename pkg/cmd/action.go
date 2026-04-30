@@ -98,8 +98,6 @@ func handleActionsAddReaction(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.ActionAddReactionParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -110,6 +108,8 @@ func handleActionsAddReaction(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := hyperspell.ActionAddReactionParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -139,8 +139,6 @@ func handleActionsSendMessage(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.ActionSendMessageParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -151,6 +149,8 @@ func handleActionsSendMessage(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := hyperspell.ActionSendMessageParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))

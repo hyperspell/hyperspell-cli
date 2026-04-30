@@ -20,8 +20,9 @@ var evaluateGetQuery = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "query-id",
-			Required: true,
+			Name:      "query-id",
+			Required:  true,
+			PathParam: "query_id",
 		},
 	},
 	Action:          handleEvaluateGetQuery,
@@ -34,8 +35,9 @@ var evaluateScoreHighlight = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "highlight-id",
-			Required: true,
+			Name:      "highlight-id",
+			Required:  true,
+			PathParam: "highlight_id",
 		},
 		&requestflag.Flag[*string]{
 			Name:     "comment",
@@ -59,8 +61,9 @@ var evaluateScoreQuery = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "query-id",
-			Required: true,
+			Name:      "query-id",
+			Required:  true,
+			PathParam: "query_id",
 		},
 		&requestflag.Flag[float64]{
 			Name:     "score",
@@ -126,8 +129,6 @@ func handleEvaluateScoreHighlight(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.EvaluateScoreHighlightParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -138,6 +139,8 @@ func handleEvaluateScoreHighlight(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := hyperspell.EvaluateScoreHighlightParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -175,8 +178,6 @@ func handleEvaluateScoreQuery(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.EvaluateScoreQueryParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -187,6 +188,8 @@ func handleEvaluateScoreQuery(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := hyperspell.EvaluateScoreQueryParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
