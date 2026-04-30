@@ -43,7 +43,7 @@ var actionsAddReaction = cli.Command{
 			Required: true,
 			BodyPath: "timestamp",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "connection",
 			Usage:    "Connection ID. If omitted, auto-resolved from provider + user.",
 			BodyPath: "connection",
@@ -70,17 +70,17 @@ var actionsSendMessage = cli.Command{
 			Required: true,
 			BodyPath: "text",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "channel",
 			Usage:    "Channel ID (required for Slack)",
 			BodyPath: "channel",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "connection",
 			Usage:    "Connection ID. If omitted, auto-resolved from provider + user.",
 			BodyPath: "connection",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "parent",
 			Usage:    "Parent message ID for threading (thread_ts for Slack)",
 			BodyPath: "parent",

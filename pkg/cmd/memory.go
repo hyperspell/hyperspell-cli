@@ -68,16 +68,16 @@ var memoriesList = cli.Command{
 	Usage:   "This endpoint allows you to paginate through all documents in the index. You can\nfilter the documents by title, date, metadata, etc.",
 	Suggest: true,
 	Flags: []cli.Flag{
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:      "collection",
 			Usage:     "Filter documents by collection.",
 			QueryPath: "collection",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:      "cursor",
 			QueryPath: "cursor",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:      "filter",
 			Usage:     `Filter documents by metadata using MongoDB-style operators. Example: {"department": "engineering", "priority": {"$gt": 3}}`,
 			QueryPath: "filter",
@@ -87,12 +87,12 @@ var memoriesList = cli.Command{
 			Default:   50,
 			QueryPath: "size",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:      "source",
 			Usage:     "Filter documents by source.",
 			QueryPath: "source",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:      "status",
 			Usage:     "Filter documents by status.",
 			QueryPath: "status",
@@ -136,7 +136,7 @@ var memoriesAdd = cli.Command{
 			Required: true,
 			BodyPath: "text",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "collection",
 			Usage:    "The collection to add the document to — deprecated, set the collection using metadata instead.",
 			BodyPath: "collection",
@@ -156,7 +156,7 @@ var memoriesAdd = cli.Command{
 			Usage:    "The resource ID to add the document to. If not provided, a new resource ID will be generated. If provided, the document will be updated if it already exists.",
 			BodyPath: "resource_id",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "title",
 			Usage:    "Title of the document.",
 			BodyPath: "title",
@@ -187,7 +187,7 @@ var memoriesAddBulk = requestflag.WithInnerFlags(cli.Command{
 			Usage:      "Full text of the document.",
 			InnerField: "text",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[*string]{
 			Name:       "item.collection",
 			Usage:      "The collection to add the document to — deprecated, set the collection using metadata instead.",
 			InnerField: "collection",
@@ -207,7 +207,7 @@ var memoriesAddBulk = requestflag.WithInnerFlags(cli.Command{
 			Usage:      "The resource ID to add the document to. If not provided, a new resource ID will be generated. If provided, the document will be updated if it already exists.",
 			InnerField: "resource_id",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[*string]{
 			Name:       "item.title",
 			Usage:      "Title of the document.",
 			InnerField: "title",
@@ -333,7 +333,7 @@ var memoriesSearch = requestflag.WithInnerFlags(cli.Command{
 			Usage:      "Search options for Notion",
 			InnerField: "notion",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[*float64]{
 			Name:       "options.recency-half-life-days",
 			Usage:      "When set, multiplies each result's score by an exponential-decay factor based on the document's most recent activity timestamp (source-reported last_modified, falling back to document_date). A document one half-life old gets its score halved. Resources with no recency timestamp are passed through unchanged. Leave unset to disable.",
 			InnerField: "recency_half_life_days",
@@ -387,12 +387,12 @@ var memoriesUpload = cli.Command{
 			BodyPath:  "file",
 			FileInput: true,
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "collection",
 			Usage:    "The collection to add the document to — deprecated, set the collection using metadata instead.",
 			BodyPath: "collection",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "metadata",
 			Usage:    "Custom metadata as JSON string for filtering. Keys must be alphanumeric with underscores, max 64 chars. Values must be string, number, or boolean.",
 			BodyPath: "metadata",

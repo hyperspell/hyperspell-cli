@@ -32,7 +32,7 @@ var integrationsConnect = cli.Command{
 			Name:     "integration-id",
 			Required: true,
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:      "redirect-url",
 			QueryPath: "redirect_url",
 		},

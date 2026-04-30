@@ -36,7 +36,7 @@ var sessionsAdd = cli.Command{
 			Default:  []string{"procedure"},
 			BodyPath: "extract",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "format",
 			Usage:    "Trace format: 'vercel', 'hyperdoc', or 'openclaw'. Auto-detected if not set.",
 			BodyPath: "format",
@@ -51,7 +51,7 @@ var sessionsAdd = cli.Command{
 			Usage:    "Resource identifier for the trace.",
 			BodyPath: "session_id",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "title",
 			Usage:    "Title of the trace",
 			BodyPath: "title",

@@ -37,7 +37,7 @@ var evaluateScoreHighlight = cli.Command{
 			Name:     "highlight-id",
 			Required: true,
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "comment",
 			Usage:    "Comment on the chunk",
 			BodyPath: "comment",

@@ -19,7 +19,7 @@ var vaultsList = cli.Command{
 	Usage:   "This endpoint lists all collections, and how many documents are in each\ncollection. All documents that do not have a collection assigned are in the\n`null` collection.",
 	Suggest: true,
 	Flags: []cli.Flag{
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:      "cursor",
 			QueryPath: "cursor",
 		},
