@@ -23,7 +23,7 @@ var foldersList = cli.Command{
 			Name:     "connection-id",
 			Required: true,
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:      "parent-id",
 			Usage:     "Parent folder ID. Omit for root-level folders.",
 			QueryPath: "parent_id",
@@ -86,17 +86,17 @@ var foldersSetPolicies = cli.Command{
 			Required: true,
 			BodyPath: "sync_mode",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "folder-name",
 			Usage:    "Display name of the folder",
 			BodyPath: "folder_name",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "folder-path",
 			Usage:    "Display path of the folder",
 			BodyPath: "folder_path",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "parent-folder-id",
 			Usage:    "Parent folder's provider ID for inheritance resolution",
 			BodyPath: "parent_folder_id",

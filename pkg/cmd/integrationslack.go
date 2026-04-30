@@ -25,7 +25,7 @@ var integrationsSlackList = cli.Command{
 			Default:   []string{},
 			QueryPath: "channels",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*bool]{
 			Name:      "exclude-archived",
 			Usage:     "If set, pass 'exclude_archived' to Slack. If None, omit the param.",
 			QueryPath: "exclude_archived",

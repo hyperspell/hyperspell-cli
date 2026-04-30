@@ -42,12 +42,12 @@ var authUserToken = cli.Command{
 			Required: true,
 			BodyPath: "user_id",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "expires-in",
 			Usage:    "Token lifetime, e.g., '30m', '2h', '1d'. Defaults to 24 hours if not provided.",
 			BodyPath: "expires_in",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "origin",
 			Usage:    "Origin of the request, used for CSRF protection. If set, the token will only be valid for requests originating from this origin.",
 			BodyPath: "origin",
