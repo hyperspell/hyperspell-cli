@@ -5,7 +5,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/hyperspell/hyperspell-cli/internal/apiquery"
 	"github.com/hyperspell/hyperspell-cli/internal/requestflag"
@@ -21,19 +20,27 @@ var memoriesUpdate = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "source",
-			Usage:    `Allowed values: "reddit", "notion", "slack", "google_calendar", "google_mail", "box", "dropbox", "google_drive", "github", "vault", "web_crawler", "trace", "microsoft_teams", "gmail_actions".`,
-			Required: true,
+			Name:      "source",
+			Usage:     `Allowed values: "reddit", "notion", "slack", "google_calendar", "google_mail", "box", "dropbox", "github", "google_drive", "vault", "web_crawler", "trace", "microsoft_teams", "gmail_actions", "granola", "fathom", "linear".`,
+			Required:  true,
+			PathParam: "source",
 		},
 		&requestflag.Flag[string]{
-			Name:     "resource-id",
-			Required: true,
+			Name:      "resource-id",
+			Required:  true,
+			PathParam: "resource_id",
 		},
 		&requestflag.Flag[any]{
 			Name:     "collection",
 			Usage:    "The collection to move the document to — deprecated, set the collection using metadata instead.",
 			Default:  map[string]any{},
 			BodyPath: "collection",
+		},
+		&requestflag.Flag[any]{
+			Name:     "date",
+			Usage:    "Date of the document for ranking and filtering.",
+			Default:  map[string]any{},
+			BodyPath: "date",
 		},
 		&requestflag.Flag[any]{
 			Name:     "metadata",
@@ -63,16 +70,16 @@ var memoriesList = cli.Command{
 	Usage:   "This endpoint allows you to paginate through all documents in the index. You can\nfilter the documents by title, date, metadata, etc.",
 	Suggest: true,
 	Flags: []cli.Flag{
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:      "collection",
 			Usage:     "Filter documents by collection.",
 			QueryPath: "collection",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:      "cursor",
 			QueryPath: "cursor",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:      "filter",
 			Usage:     `Filter documents by metadata using MongoDB-style operators. Example: {"department": "engineering", "priority": {"$gt": 3}}`,
 			QueryPath: "filter",
@@ -82,12 +89,12 @@ var memoriesList = cli.Command{
 			Default:   50,
 			QueryPath: "size",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:      "source",
 			Usage:     "Filter documents by source.",
 			QueryPath: "source",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:      "status",
 			Usage:     "Filter documents by status.",
 			QueryPath: "status",
@@ -107,13 +114,15 @@ var memoriesDelete = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "source",
-			Usage:    `Allowed values: "reddit", "notion", "slack", "google_calendar", "google_mail", "box", "dropbox", "google_drive", "github", "vault", "web_crawler", "trace", "microsoft_teams", "gmail_actions".`,
-			Required: true,
+			Name:      "source",
+			Usage:     `Allowed values: "reddit", "notion", "slack", "google_calendar", "google_mail", "box", "dropbox", "github", "google_drive", "vault", "web_crawler", "trace", "microsoft_teams", "gmail_actions", "granola", "fathom", "linear".`,
+			Required:  true,
+			PathParam: "source",
 		},
 		&requestflag.Flag[string]{
-			Name:     "resource-id",
-			Required: true,
+			Name:      "resource-id",
+			Required:  true,
+			PathParam: "resource_id",
 		},
 	},
 	Action:          handleMemoriesDelete,
@@ -131,7 +140,7 @@ var memoriesAdd = cli.Command{
 			Required: true,
 			BodyPath: "text",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "collection",
 			Usage:    "The collection to add the document to — deprecated, set the collection using metadata instead.",
 			BodyPath: "collection",
@@ -141,7 +150,7 @@ var memoriesAdd = cli.Command{
 			Usage:    "Date of the document. Depending on the document, this could be the creation date or date the document was last updated (eg. for a chat transcript, this would be the date of the last message). This helps the ranking algorithm and allows you to filter by date range.",
 			BodyPath: "date",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[map[string]any]{
 			Name:     "metadata",
 			Usage:    "Custom metadata for filtering. Keys must be alphanumeric with underscores, max 64 chars. Values must be string, number, boolean, or null.",
 			BodyPath: "metadata",
@@ -151,7 +160,7 @@ var memoriesAdd = cli.Command{
 			Usage:    "The resource ID to add the document to. If not provided, a new resource ID will be generated. If provided, the document will be updated if it already exists.",
 			BodyPath: "resource_id",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "title",
 			Usage:    "Title of the document.",
 			BodyPath: "title",
@@ -182,7 +191,7 @@ var memoriesAddBulk = requestflag.WithInnerFlags(cli.Command{
 			Usage:      "Full text of the document.",
 			InnerField: "text",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[*string]{
 			Name:       "item.collection",
 			Usage:      "The collection to add the document to — deprecated, set the collection using metadata instead.",
 			InnerField: "collection",
@@ -192,7 +201,7 @@ var memoriesAddBulk = requestflag.WithInnerFlags(cli.Command{
 			Usage:      "Date of the document. Depending on the document, this could be the creation date or date the document was last updated (eg. for a chat transcript, this would be the date of the last message). This helps the ranking algorithm and allows you to filter by date range.",
 			InnerField: "date",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[map[string]any]{
 			Name:       "item.metadata",
 			Usage:      "Custom metadata for filtering. Keys must be alphanumeric with underscores, max 64 chars. Values must be string, number, boolean, or null.",
 			InnerField: "metadata",
@@ -202,7 +211,7 @@ var memoriesAddBulk = requestflag.WithInnerFlags(cli.Command{
 			Usage:      "The resource ID to add the document to. If not provided, a new resource ID will be generated. If provided, the document will be updated if it already exists.",
 			InnerField: "resource_id",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[*string]{
 			Name:       "item.title",
 			Usage:      "Title of the document.",
 			InnerField: "title",
@@ -216,13 +225,15 @@ var memoriesGet = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "source",
-			Usage:    `Allowed values: "reddit", "notion", "slack", "google_calendar", "google_mail", "box", "dropbox", "google_drive", "github", "vault", "web_crawler", "trace", "microsoft_teams", "gmail_actions".`,
-			Required: true,
+			Name:      "source",
+			Usage:     `Allowed values: "reddit", "notion", "slack", "google_calendar", "google_mail", "box", "dropbox", "github", "google_drive", "vault", "web_crawler", "trace", "microsoft_teams", "gmail_actions", "granola", "fathom", "linear".`,
+			Required:  true,
+			PathParam: "source",
 		},
 		&requestflag.Flag[string]{
-			Name:     "resource-id",
-			Required: true,
+			Name:      "resource-id",
+			Required:  true,
+			PathParam: "resource_id",
 		},
 	},
 	Action:          handleMemoriesGet,
@@ -293,7 +304,7 @@ var memoriesSearch = requestflag.WithInnerFlags(cli.Command{
 			Usage:      "Search options for Box",
 			InnerField: "box",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[map[string]any]{
 			Name:       "options.filter",
 			Usage:      "Metadata filters using MongoDB-style operators. Example: {'status': 'published', 'priority': {'$gt': 3}}",
 			InnerField: "filter",
@@ -327,6 +338,11 @@ var memoriesSearch = requestflag.WithInnerFlags(cli.Command{
 			Name:       "options.notion",
 			Usage:      "Search options for Notion",
 			InnerField: "notion",
+		},
+		&requestflag.InnerFlag[*float64]{
+			Name:       "options.recency-half-life-days",
+			Usage:      "When set, multiplies each result's score by an exponential-decay factor based on the document's most recent activity timestamp (source-reported last_modified, falling back to document_date). A document one half-life old gets its score halved. Resources with no recency timestamp are passed through unchanged. Leave unset to disable.",
+			InnerField: "recency_half_life_days",
 		},
 		&requestflag.InnerFlag[map[string]any]{
 			Name:       "options.reddit",
@@ -377,12 +393,12 @@ var memoriesUpload = cli.Command{
 			BodyPath:  "file",
 			FileInput: true,
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "collection",
 			Usage:    "The collection to add the document to — deprecated, set the collection using metadata instead.",
 			BodyPath: "collection",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "metadata",
 			Usage:    "Custom metadata as JSON string for filtering. Keys must be alphanumeric with underscores, max 64 chars. Values must be string, number, or boolean.",
 			BodyPath: "metadata",
@@ -403,10 +419,6 @@ func handleMemoriesUpdate(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.MemoryUpdateParams{
-		Source: hyperspell.MemoryUpdateParamsSource(cmd.Value("source").(string)),
-	}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -416,6 +428,10 @@ func handleMemoriesUpdate(ctx context.Context, cmd *cli.Command) error {
 	)
 	if err != nil {
 		return err
+	}
+
+	params := hyperspell.MemoryUpdateParams{
+		Source: hyperspell.MemoryUpdateParamsSource(cmd.Value("source").(string)),
 	}
 
 	var res []byte
@@ -432,8 +448,15 @@ func handleMemoriesUpdate(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "memories update", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "memories update",
+		Transform:      transform,
+	})
 }
 
 func handleMemoriesList(ctx context.Context, cmd *cli.Command) error {
@@ -443,8 +466,6 @@ func handleMemoriesList(ctx context.Context, cmd *cli.Command) error {
 	if len(unusedArgs) > 0 {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
-
-	params := hyperspell.MemoryListParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -457,7 +478,10 @@ func handleMemoriesList(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
+	params := hyperspell.MemoryListParams{}
+
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
 	if format == "raw" {
 		var res []byte
@@ -467,14 +491,26 @@ func handleMemoriesList(ctx context.Context, cmd *cli.Command) error {
 			return err
 		}
 		obj := gjson.ParseBytes(res)
-		return ShowJSON(os.Stdout, "memories list", obj, format, transform)
+		return ShowJSON(obj, ShowJSONOpts{
+			ExplicitFormat: explicitFormat,
+			Format:         format,
+			RawOutput:      cmd.Root().Bool("raw-output"),
+			Title:          "memories list",
+			Transform:      transform,
+		})
 	} else {
 		iter := client.Memories.ListAutoPaging(ctx, params, options...)
 		maxItems := int64(-1)
 		if cmd.IsSet("max-items") {
 			maxItems = cmd.Value("max-items").(int64)
 		}
-		return ShowJSONIterator(os.Stdout, "memories list", iter, format, transform, maxItems)
+		return ShowJSONIterator(iter, maxItems, ShowJSONOpts{
+			ExplicitFormat: explicitFormat,
+			Format:         format,
+			RawOutput:      cmd.Root().Bool("raw-output"),
+			Title:          "memories list",
+			Transform:      transform,
+		})
 	}
 }
 
@@ -489,10 +525,6 @@ func handleMemoriesDelete(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.MemoryDeleteParams{
-		Source: hyperspell.MemoryDeleteParamsSource(cmd.Value("source").(string)),
-	}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -502,6 +534,10 @@ func handleMemoriesDelete(ctx context.Context, cmd *cli.Command) error {
 	)
 	if err != nil {
 		return err
+	}
+
+	params := hyperspell.MemoryDeleteParams{
+		Source: hyperspell.MemoryDeleteParamsSource(cmd.Value("source").(string)),
 	}
 
 	var res []byte
@@ -518,8 +554,15 @@ func handleMemoriesDelete(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "memories delete", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "memories delete",
+		Transform:      transform,
+	})
 }
 
 func handleMemoriesAdd(ctx context.Context, cmd *cli.Command) error {
@@ -530,8 +573,6 @@ func handleMemoriesAdd(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.MemoryAddParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -542,6 +583,8 @@ func handleMemoriesAdd(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := hyperspell.MemoryAddParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -552,8 +595,15 @@ func handleMemoriesAdd(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "memories add", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "memories add",
+		Transform:      transform,
+	})
 }
 
 func handleMemoriesAddBulk(ctx context.Context, cmd *cli.Command) error {
@@ -563,8 +613,6 @@ func handleMemoriesAddBulk(ctx context.Context, cmd *cli.Command) error {
 	if len(unusedArgs) > 0 {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
-
-	params := hyperspell.MemoryAddBulkParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -577,6 +625,8 @@ func handleMemoriesAddBulk(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
+	params := hyperspell.MemoryAddBulkParams{}
+
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
 	_, err = client.Memories.AddBulk(ctx, params, options...)
@@ -586,8 +636,15 @@ func handleMemoriesAddBulk(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "memories add-bulk", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "memories add-bulk",
+		Transform:      transform,
+	})
 }
 
 func handleMemoriesGet(ctx context.Context, cmd *cli.Command) error {
@@ -601,10 +658,6 @@ func handleMemoriesGet(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.MemoryGetParams{
-		Source: hyperspell.MemoryGetParamsSource(cmd.Value("source").(string)),
-	}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -614,6 +667,10 @@ func handleMemoriesGet(ctx context.Context, cmd *cli.Command) error {
 	)
 	if err != nil {
 		return err
+	}
+
+	params := hyperspell.MemoryGetParams{
+		Source: hyperspell.MemoryGetParamsSource(cmd.Value("source").(string)),
 	}
 
 	var res []byte
@@ -630,8 +687,15 @@ func handleMemoriesGet(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "memories get", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "memories get",
+		Transform:      transform,
+	})
 }
 
 func handleMemoriesSearch(ctx context.Context, cmd *cli.Command) error {
@@ -641,8 +705,6 @@ func handleMemoriesSearch(ctx context.Context, cmd *cli.Command) error {
 	if len(unusedArgs) > 0 {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
-
-	params := hyperspell.MemorySearchParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -655,6 +717,8 @@ func handleMemoriesSearch(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
+	params := hyperspell.MemorySearchParams{}
+
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
 	_, err = client.Memories.Search(ctx, params, options...)
@@ -664,8 +728,15 @@ func handleMemoriesSearch(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "memories search", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "memories search",
+		Transform:      transform,
+	})
 }
 
 func handleMemoriesStatus(ctx context.Context, cmd *cli.Command) error {
@@ -696,8 +767,15 @@ func handleMemoriesStatus(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "memories status", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "memories status",
+		Transform:      transform,
+	})
 }
 
 func handleMemoriesUpload(ctx context.Context, cmd *cli.Command) error {
@@ -707,8 +785,6 @@ func handleMemoriesUpload(ctx context.Context, cmd *cli.Command) error {
 	if len(unusedArgs) > 0 {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
-
-	params := hyperspell.MemoryUploadParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -721,6 +797,8 @@ func handleMemoriesUpload(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
+	params := hyperspell.MemoryUploadParams{}
+
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
 	_, err = client.Memories.Upload(ctx, params, options...)
@@ -730,6 +808,13 @@ func handleMemoriesUpload(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "memories upload", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "memories upload",
+		Transform:      transform,
+	})
 }

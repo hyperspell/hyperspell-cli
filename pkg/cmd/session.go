@@ -5,7 +5,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/hyperspell/hyperspell-cli/internal/apiquery"
 	"github.com/hyperspell/hyperspell-cli/internal/requestflag"
@@ -37,12 +36,12 @@ var sessionsAdd = cli.Command{
 			Default:  []string{"procedure"},
 			BodyPath: "extract",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "format",
 			Usage:    "Trace format: 'vercel', 'hyperdoc', or 'openclaw'. Auto-detected if not set.",
 			BodyPath: "format",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[map[string]any]{
 			Name:     "metadata",
 			Usage:    "Custom metadata for filtering. Keys must be alphanumeric with underscores, max 64 chars.",
 			BodyPath: "metadata",
@@ -52,7 +51,7 @@ var sessionsAdd = cli.Command{
 			Usage:    "Resource identifier for the trace.",
 			BodyPath: "session_id",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "title",
 			Usage:    "Title of the trace",
 			BodyPath: "title",
@@ -70,8 +69,6 @@ func handleSessionsAdd(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.SessionAddParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -83,6 +80,8 @@ func handleSessionsAdd(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
+	params := hyperspell.SessionAddParams{}
+
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
 	_, err = client.Sessions.Add(ctx, params, options...)
@@ -92,6 +91,13 @@ func handleSessionsAdd(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "sessions add", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "sessions add",
+		Transform:      transform,
+	})
 }

@@ -5,7 +5,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/hyperspell/hyperspell-cli/internal/apiquery"
 	"github.com/hyperspell/hyperspell-cli/internal/requestflag"
@@ -21,8 +20,9 @@ var evaluateGetQuery = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "query-id",
-			Required: true,
+			Name:      "query-id",
+			Required:  true,
+			PathParam: "query_id",
 		},
 	},
 	Action:          handleEvaluateGetQuery,
@@ -35,10 +35,11 @@ var evaluateScoreHighlight = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "highlight-id",
-			Required: true,
+			Name:      "highlight-id",
+			Required:  true,
+			PathParam: "highlight_id",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "comment",
 			Usage:    "Comment on the chunk",
 			BodyPath: "comment",
@@ -60,8 +61,9 @@ var evaluateScoreQuery = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "query-id",
-			Required: true,
+			Name:      "query-id",
+			Required:  true,
+			PathParam: "query_id",
 		},
 		&requestflag.Flag[float64]{
 			Name:     "score",
@@ -105,8 +107,15 @@ func handleEvaluateGetQuery(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "evaluate get-query", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "evaluate get-query",
+		Transform:      transform,
+	})
 }
 
 func handleEvaluateScoreHighlight(ctx context.Context, cmd *cli.Command) error {
@@ -120,8 +129,6 @@ func handleEvaluateScoreHighlight(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.EvaluateScoreHighlightParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -132,6 +139,8 @@ func handleEvaluateScoreHighlight(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := hyperspell.EvaluateScoreHighlightParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -147,8 +156,15 @@ func handleEvaluateScoreHighlight(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "evaluate score-highlight", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "evaluate score-highlight",
+		Transform:      transform,
+	})
 }
 
 func handleEvaluateScoreQuery(ctx context.Context, cmd *cli.Command) error {
@@ -162,8 +178,6 @@ func handleEvaluateScoreQuery(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.EvaluateScoreQueryParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -174,6 +188,8 @@ func handleEvaluateScoreQuery(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := hyperspell.EvaluateScoreQueryParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -189,6 +205,13 @@ func handleEvaluateScoreQuery(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "evaluate score-query", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "evaluate score-query",
+		Transform:      transform,
+	})
 }
