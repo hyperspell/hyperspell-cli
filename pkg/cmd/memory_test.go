@@ -189,7 +189,7 @@ func TestMemoriesSearch(t *testing.T) {
 			"memories", "search",
 			"--query", "What does Hyperspell do?",
 			"--answer=true",
-			"--effort", "0",
+			"--effort", "minimal",
 			"--max-results", "0",
 			"--options", "{after: '2019-12-27T18:11:19.117Z', answer_model: llama-3.1, before: '2019-12-27T18:11:19.117Z', box: {weight: 0}, filter: {}, google_calendar: {calendar_id: calendar_id, weight: 0}, google_drive: {weight: 0}, google_mail: {label_ids: [string], weight: 0}, max_results: 200, memory_types: [procedure], notion: {notion_page_ids: [string], weight: 0}, recency_half_life_days: 1, reddit: {period: hour, sort: relevance, subreddit: subreddit, weight: 0}, resource_ids: [string], slack: {channels: [string], exclude_archived: true, include_dms: true, include_group_dms: true, include_private: true, weight: 0}, vault: {weight: 0}, web_crawler: {max_depth: 0, url: url, weight: 0}}",
 			"--source", "vault",
@@ -208,7 +208,7 @@ func TestMemoriesSearch(t *testing.T) {
 			"memories", "search",
 			"--query", "What does Hyperspell do?",
 			"--answer=true",
-			"--effort", "0",
+			"--effort", "minimal",
 			"--max-results", "0",
 			"--options.after", "2019-12-27T18:11:19.117Z",
 			"--options.answer-model", "llama-3.1",
@@ -236,7 +236,7 @@ func TestMemoriesSearch(t *testing.T) {
 		pipeData := []byte("" +
 			"query: What does Hyperspell do?\n" +
 			"answer: true\n" +
-			"effort: 0\n" +
+			"effort: minimal\n" +
 			"max_results: 0\n" +
 			"options:\n" +
 			"  after: '2019-12-27T18:11:19.117Z'\n" +
