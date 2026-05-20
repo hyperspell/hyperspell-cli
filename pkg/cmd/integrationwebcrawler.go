@@ -5,7 +5,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/hyperspell/hyperspell-cli/internal/apiquery"
 	"github.com/hyperspell/hyperspell-cli/internal/requestflag"
@@ -51,8 +50,6 @@ func handleIntegrationsWebCrawlerIndex(ctx context.Context, cmd *cli.Command) er
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.IntegrationWebCrawlerIndexParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -64,6 +61,8 @@ func handleIntegrationsWebCrawlerIndex(ctx context.Context, cmd *cli.Command) er
 		return err
 	}
 
+	params := hyperspell.IntegrationWebCrawlerIndexParams{}
+
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
 	_, err = client.Integrations.WebCrawler.Index(ctx, params, options...)
@@ -73,6 +72,13 @@ func handleIntegrationsWebCrawlerIndex(ctx context.Context, cmd *cli.Command) er
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "integrations:web-crawler index", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "integrations:web-crawler index",
+		Transform:      transform,
+	})
 }

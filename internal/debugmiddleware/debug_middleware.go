@@ -22,7 +22,11 @@ const redactedPlaceholder = "<REDACTED>"
 // Headers known to contain sensitive information like an API key. Note that this exclude `Authorization`,
 // which is handled specially in `redactRequest` below.
 var sensitiveHeaders = []string{
-	"X-As-User",
+	"api-key",
+	"x-api-key",
+	"cookie",
+	"set-cookie",
+	"x-as-user",
 }
 
 // RequestLogger is a middleware that logs HTTP requests and responses.

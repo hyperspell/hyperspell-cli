@@ -5,7 +5,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/hyperspell/hyperspell-cli/internal/apiquery"
 	"github.com/hyperspell/hyperspell-cli/internal/requestflag"
@@ -43,12 +42,12 @@ var authUserToken = cli.Command{
 			Required: true,
 			BodyPath: "user_id",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "expires-in",
 			Usage:    "Token lifetime, e.g., '30m', '2h', '1d'. Defaults to 24 hours if not provided.",
 			BodyPath: "expires_in",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "origin",
 			Usage:    "Origin of the request, used for CSRF protection. If set, the token will only be valid for requests originating from this origin.",
 			BodyPath: "origin",
@@ -86,8 +85,15 @@ func handleAuthDeleteUser(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "auth delete-user", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "auth delete-user",
+		Transform:      transform,
+	})
 }
 
 func handleAuthMe(ctx context.Context, cmd *cli.Command) error {
@@ -118,8 +124,15 @@ func handleAuthMe(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "auth me", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "auth me",
+		Transform:      transform,
+	})
 }
 
 func handleAuthUserToken(ctx context.Context, cmd *cli.Command) error {
@@ -129,8 +142,6 @@ func handleAuthUserToken(ctx context.Context, cmd *cli.Command) error {
 	if len(unusedArgs) > 0 {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
-
-	params := hyperspell.AuthUserTokenParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -143,6 +154,8 @@ func handleAuthUserToken(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
+	params := hyperspell.AuthUserTokenParams{}
+
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
 	_, err = client.Auth.UserToken(ctx, params, options...)
@@ -152,6 +165,13 @@ func handleAuthUserToken(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "auth user-token", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "auth user-token",
+		Transform:      transform,
+	})
 }
