@@ -274,6 +274,12 @@ var memoriesSearch = requestflag.WithInnerFlags(cli.Command{
 			Usage:    "Search options for the query.",
 			BodyPath: "options",
 		},
+		&requestflag.Flag[bool]{
+			Name:     "provenance",
+			Usage:    "If true (effort='very_high' only), attach a provenance record to the response: the source documents and entities the answer was grounded in, the agent's search trajectory, and any sources that failed. Adds one indexed lookup; intended for auditability / compliance use cases.",
+			Default:  false,
+			BodyPath: "provenance",
+		},
 		&requestflag.Flag[[]string]{
 			Name:     "source",
 			Usage:    "Only query documents from these sources.",

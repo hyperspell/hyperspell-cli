@@ -192,6 +192,7 @@ func TestMemoriesSearch(t *testing.T) {
 			"--effort", "minimal",
 			"--max-results", "0",
 			"--options", "{after: '2019-12-27T18:11:19.117Z', answer_model: llama-3.1, before: '2019-12-27T18:11:19.117Z', box: {weight: 0}, filter: {}, google_calendar: {calendar_id: calendar_id, weight: 0}, google_drive: {weight: 0}, google_mail: {label_ids: [string], weight: 0}, max_results: 200, memory_types: [procedure], notion: {notion_page_ids: [string], weight: 0}, recency_half_life_days: 1, reddit: {period: hour, sort: relevance, subreddit: subreddit, weight: 0}, resource_ids: [string], slack: {channels: [string], exclude_archived: true, include_dms: true, include_group_dms: true, include_private: true, weight: 0}, vault: {weight: 0}, web_crawler: {max_depth: 0, url: url, weight: 0}}",
+			"--provenance=true",
 			"--source", "vault",
 		)
 	})
@@ -227,6 +228,7 @@ func TestMemoriesSearch(t *testing.T) {
 			"--options.slack", "{channels: [string], exclude_archived: true, include_dms: true, include_group_dms: true, include_private: true, weight: 0}",
 			"--options.vault", "{weight: 0}",
 			"--options.web-crawler", "{max_depth: 0, url: url, weight: 0}",
+			"--provenance=true",
 			"--source", "vault",
 		)
 	})
@@ -283,6 +285,7 @@ func TestMemoriesSearch(t *testing.T) {
 			"    max_depth: 0\n" +
 			"    url: url\n" +
 			"    weight: 0\n" +
+			"provenance: true\n" +
 			"sources:\n" +
 			"  - vault\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
