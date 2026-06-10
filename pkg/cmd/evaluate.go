@@ -29,6 +29,30 @@ var evaluateGetQuery = cli.Command{
 	HideHelpCommand: true,
 }
 
+var evaluateQueries = cli.Command{
+	Name:    "queries",
+	Usage:   "Paginate through all prior queries for the app, newest first.",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[*string]{
+			Name:      "cursor",
+			QueryPath: "cursor",
+		},
+		&requestflag.Flag[int64]{
+			Name:      "size",
+			Default:   50,
+			QueryPath: "size",
+		},
+		&requestflag.Flag[*string]{
+			Name:      "user-id",
+			Usage:     "Filter queries by the user that issued them.",
+			QueryPath: "user_id",
+		},
+	},
+	Action:          handleEvaluateQueries,
+	HideHelpCommand: true,
+}
+
 var evaluateScoreHighlight = cli.Command{
 	Name:    "score-highlight",
 	Usage:   "Score an individual highlight.",
@@ -114,6 +138,47 @@ func handleEvaluateGetQuery(ctx context.Context, cmd *cli.Command) error {
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "evaluate get-query",
+		Transform:      transform,
+	})
+}
+
+func handleEvaluateQueries(ctx context.Context, cmd *cli.Command) error {
+	client := hyperspell.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := hyperspell.EvaluateQueriesParams{}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Evaluate.Queries(ctx, params, options...)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "evaluate queries",
 		Transform:      transform,
 	})
 }

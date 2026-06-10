@@ -20,6 +20,20 @@ func TestEvaluateGetQuery(t *testing.T) {
 	})
 }
 
+func TestEvaluateQueries(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"--user-id", "string",
+			"evaluate", "queries",
+			"--cursor", "cursor",
+			"--size", "0",
+			"--user-id", "user_id",
+		)
+	})
+}
+
 func TestEvaluateScoreHighlight(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
