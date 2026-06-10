@@ -20,13 +20,14 @@ func TestEvaluateGetQuery(t *testing.T) {
 	})
 }
 
-func TestEvaluateQueries(t *testing.T) {
+func TestEvaluateListQueries(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
 			"--api-key", "string",
 			"--user-id", "string",
-			"evaluate", "queries",
+			"evaluate", "list-queries",
+			"--max-items", "10",
 			"--cursor", "cursor",
 			"--size", "0",
 			"--user-id", "user_id",
