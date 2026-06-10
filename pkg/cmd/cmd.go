@@ -164,6 +164,7 @@ func init() {
 				Suggest:  true,
 				Commands: []*cli.Command{
 					&evaluateGetQuery,
+					&evaluateQueries,
 					&evaluateScoreHighlight,
 					&evaluateScoreQuery,
 				},
