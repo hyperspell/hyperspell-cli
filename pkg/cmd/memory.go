@@ -221,7 +221,7 @@ var memoriesAddBulk = requestflag.WithInnerFlags(cli.Command{
 
 var memoriesGet = cli.Command{
 	Name:    "get",
-	Usage:   "Retrieves a document by provider and resource_id.",
+	Usage:   "Retrieves a document by provider and resource_id, as a document-shaped response\ncarrying the full hyperdoc tree (ENG-2479 Phase 4).",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
