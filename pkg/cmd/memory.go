@@ -350,11 +350,6 @@ var memoriesSearch = requestflag.WithInnerFlags(cli.Command{
 			Usage:      "When set, multiplies each result's score by an exponential-decay factor based on the document's most recent activity timestamp (source-reported last_modified, falling back to document_date). A document one half-life old gets its score halved. Resources with no recency timestamp are passed through unchanged. Leave unset to disable.",
 			InnerField: "recency_half_life_days",
 		},
-		&requestflag.InnerFlag[map[string]any]{
-			Name:       "options.reddit",
-			Usage:      "Search options for Reddit",
-			InnerField: "reddit",
-		},
 		&requestflag.InnerFlag[any]{
 			Name:       "options.resource-ids",
 			Usage:      "Only return results from these specific resource IDs. Useful for scoping searches to specific documents (e.g., a specific email thread or uploaded file).",
