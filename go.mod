@@ -8,7 +8,7 @@ require (
 	github.com/charmbracelet/lipgloss v1.1.0
 	github.com/charmbracelet/x/term v0.2.1
 	github.com/goccy/go-yaml v1.18.0
-	github.com/hyperspell/hyperspell-go v0.0.2
+	github.com/hyperspell/hyperspell-go v0.1.0
 	github.com/itchyny/json2yaml v0.1.4
 	github.com/muesli/reflow v0.3.0
 	github.com/stretchr/testify v1.10.0
