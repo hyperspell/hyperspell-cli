@@ -190,8 +190,8 @@ func TestMemoriesSearch(t *testing.T) {
 			"--query", "What does Hyperspell do?",
 			"--answer=true",
 			"--effort", "minimal",
-			"--max-results", "0",
-			"--options", "{after: '2019-12-27T18:11:19.117Z', answer_model: llama-3.1, before: '2019-12-27T18:11:19.117Z', box: {weight: 0}, filter: {}, google_calendar: {calendar_id: calendar_id, weight: 0}, google_drive: {weight: 0}, google_mail: {label_ids: [string], weight: 0}, max_results: 200, memory_types: [procedure], notion: {notion_page_ids: [string], weight: 0}, recency_half_life_days: 1, resource_ids: [string], slack: {channels: [string], exclude_archived: true, include_dms: true, include_group_dms: true, include_private: true, weight: 0}, vault: {weight: 0}, web_crawler: {max_depth: 0, url: url, weight: 0}}",
+			"--max-results", "1",
+			"--options", "{after: '2019-12-27T18:11:19.117Z', answer_model: llama-3.1, before: '2019-12-27T18:11:19.117Z', box: {weight: 0}, filter: {}, google_calendar: {calendar_id: calendar_id, weight: 0}, google_drive: {weight: 0}, google_mail: {label_ids: [string], weight: 0}, max_results: 1, memory_types: [procedure], notion: {notion_page_ids: [string], weight: 0}, recency_half_life_days: 1, resource_ids: [string], slack: {channels: [string], exclude_archived: true, include_dms: true, include_group_dms: true, include_private: true, weight: 0}, vault: {weight: 0}, web_crawler: {max_depth: 0, url: url, weight: 0}}",
 			"--provenance=true",
 			"--source", "vault",
 		)
@@ -210,7 +210,7 @@ func TestMemoriesSearch(t *testing.T) {
 			"--query", "What does Hyperspell do?",
 			"--answer=true",
 			"--effort", "minimal",
-			"--max-results", "0",
+			"--max-results", "1",
 			"--options.after", "2019-12-27T18:11:19.117Z",
 			"--options.answer-model", "llama-3.1",
 			"--options.before", "2019-12-27T18:11:19.117Z",
@@ -219,7 +219,7 @@ func TestMemoriesSearch(t *testing.T) {
 			"--options.google-calendar", "{calendar_id: calendar_id, weight: 0}",
 			"--options.google-drive", "{weight: 0}",
 			"--options.google-mail", "{label_ids: [string], weight: 0}",
-			"--options.max-results", "200",
+			"--options.max-results", "1",
 			"--options.memory-types", "[procedure]",
 			"--options.notion", "{notion_page_ids: [string], weight: 0}",
 			"--options.recency-half-life-days", "1",
@@ -238,7 +238,7 @@ func TestMemoriesSearch(t *testing.T) {
 			"query: What does Hyperspell do?\n" +
 			"answer: true\n" +
 			"effort: minimal\n" +
-			"max_results: 0\n" +
+			"max_results: 1\n" +
 			"options:\n" +
 			"  after: '2019-12-27T18:11:19.117Z'\n" +
 			"  answer_model: llama-3.1\n" +
@@ -255,7 +255,7 @@ func TestMemoriesSearch(t *testing.T) {
 			"    label_ids:\n" +
 			"      - string\n" +
 			"    weight: 0\n" +
-			"  max_results: 200\n" +
+			"  max_results: 1\n" +
 			"  memory_types:\n" +
 			"    - procedure\n" +
 			"  notion:\n" +
