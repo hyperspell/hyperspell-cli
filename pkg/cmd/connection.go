@@ -25,7 +25,7 @@ var connectionsList = cli.Command{
 
 var connectionsRevoke = cli.Command{
 	Name:    "revoke",
-	Usage:   "Revokes Hyperspell's access the given provider and deletes all stored\ncredentials and indexed data.",
+	Usage:   "Revoke Hyperspell's access to a provider and delete this user's stored data.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
