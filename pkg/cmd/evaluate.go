@@ -5,7 +5,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/hyperspell/hyperspell-cli/internal/apiquery"
 	"github.com/hyperspell/hyperspell-cli/internal/requestflag"
@@ -21,11 +20,40 @@ var evaluateGetQuery = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "query-id",
-			Required: true,
+			Name:      "query-id",
+			Required:  true,
+			PathParam: "query_id",
 		},
 	},
 	Action:          handleEvaluateGetQuery,
+	HideHelpCommand: true,
+}
+
+var evaluateListQueries = cli.Command{
+	Name:    "list-queries",
+	Usage:   "Paginate through all prior queries for the app, newest first.",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[*string]{
+			Name:      "cursor",
+			QueryPath: "cursor",
+		},
+		&requestflag.Flag[int64]{
+			Name:      "size",
+			Default:   50,
+			QueryPath: "size",
+		},
+		&requestflag.Flag[*string]{
+			Name:      "user-id",
+			Usage:     "Filter queries by the user that issued them.",
+			QueryPath: "user_id",
+		},
+		&requestflag.Flag[int64]{
+			Name:  "max-items",
+			Usage: "The maximum number of items to return (use -1 for unlimited).",
+		},
+	},
+	Action:          handleEvaluateListQueries,
 	HideHelpCommand: true,
 }
 
@@ -35,10 +63,11 @@ var evaluateScoreHighlight = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "highlight-id",
-			Required: true,
+			Name:      "highlight-id",
+			Required:  true,
+			PathParam: "highlight_id",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "comment",
 			Usage:    "Comment on the chunk",
 			BodyPath: "comment",
@@ -60,8 +89,9 @@ var evaluateScoreQuery = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "query-id",
-			Required: true,
+			Name:      "query-id",
+			Required:  true,
+			PathParam: "query_id",
 		},
 		&requestflag.Flag[float64]{
 			Name:     "score",
@@ -105,8 +135,70 @@ func handleEvaluateGetQuery(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "evaluate get-query", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "evaluate get-query",
+		Transform:      transform,
+	})
+}
+
+func handleEvaluateListQueries(ctx context.Context, cmd *cli.Command) error {
+	client := hyperspell.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := hyperspell.EvaluateListQueriesParams{}
+
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	if format == "raw" {
+		var res []byte
+		options = append(options, option.WithResponseBodyInto(&res))
+		_, err = client.Evaluate.ListQueries(ctx, params, options...)
+		if err != nil {
+			return err
+		}
+		obj := gjson.ParseBytes(res)
+		return ShowJSON(obj, ShowJSONOpts{
+			ExplicitFormat: explicitFormat,
+			Format:         format,
+			RawOutput:      cmd.Root().Bool("raw-output"),
+			Title:          "evaluate list-queries",
+			Transform:      transform,
+		})
+	} else {
+		iter := client.Evaluate.ListQueriesAutoPaging(ctx, params, options...)
+		maxItems := int64(-1)
+		if cmd.IsSet("max-items") {
+			maxItems = cmd.Value("max-items").(int64)
+		}
+		return ShowJSONIterator(iter, maxItems, ShowJSONOpts{
+			ExplicitFormat: explicitFormat,
+			Format:         format,
+			RawOutput:      cmd.Root().Bool("raw-output"),
+			Title:          "evaluate list-queries",
+			Transform:      transform,
+		})
+	}
 }
 
 func handleEvaluateScoreHighlight(ctx context.Context, cmd *cli.Command) error {
@@ -120,8 +212,6 @@ func handleEvaluateScoreHighlight(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.EvaluateScoreHighlightParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -132,6 +222,8 @@ func handleEvaluateScoreHighlight(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := hyperspell.EvaluateScoreHighlightParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -147,8 +239,15 @@ func handleEvaluateScoreHighlight(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "evaluate score-highlight", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "evaluate score-highlight",
+		Transform:      transform,
+	})
 }
 
 func handleEvaluateScoreQuery(ctx context.Context, cmd *cli.Command) error {
@@ -162,8 +261,6 @@ func handleEvaluateScoreQuery(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.EvaluateScoreQueryParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -174,6 +271,8 @@ func handleEvaluateScoreQuery(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := hyperspell.EvaluateScoreQueryParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -189,6 +288,13 @@ func handleEvaluateScoreQuery(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "evaluate score-query", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "evaluate score-query",
+		Transform:      transform,
+	})
 }

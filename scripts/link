@@ -5,9 +5,13 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 # Mark the necessary Go modules as private to avoid Go's proxy
-export GOPRIVATE="${GOPRIVATE:+$GOPRIVATE,}github.com/hyperspell/hyperspell-go,github.com/stainless-sdks/hyperspell-go"
+export GOPRIVATE="${GOPRIVATE:+$GOPRIVATE,}github.com/hyperspell/hyperspell-go,github.com/hyperspell/hyperspell-go-staging"
 
 REPLACEMENT="${1:-"../hyperspell-go"}"
 echo "==> Replacing Go SDK with $REPLACEMENT"
-go mod edit -replace github.com/hyperspell/hyperspell-go="$REPLACEMENT"
-go mod tidy -e
+if [[ -d "$REPLACEMENT" ]] || go list -m "$REPLACEMENT" >/dev/null; then
+    go mod edit -replace github.com/hyperspell/hyperspell-go="$REPLACEMENT"
+    go mod tidy -e
+else
+    echo "Skipping Go SDK replacement (branch may not exist on Go SDK)"
+fi

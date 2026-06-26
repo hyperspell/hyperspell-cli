@@ -85,7 +85,7 @@ homebrew_casks:
       name: homebrew-tools
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
     homepage: https://hyperspell.com
-    description: Offical Hyperspell CLI to give agents memory and contect
+    description: Official Hyperspell CLI to give agents memory and context
     license: MIT
     binary: "hyperspell"
     completions:

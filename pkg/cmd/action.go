@@ -5,7 +5,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/hyperspell/hyperspell-cli/internal/apiquery"
 	"github.com/hyperspell/hyperspell-cli/internal/requestflag"
@@ -44,7 +43,7 @@ var actionsAddReaction = cli.Command{
 			Required: true,
 			BodyPath: "timestamp",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "connection",
 			Usage:    "Connection ID. If omitted, auto-resolved from provider + user.",
 			BodyPath: "connection",
@@ -71,17 +70,17 @@ var actionsSendMessage = cli.Command{
 			Required: true,
 			BodyPath: "text",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "channel",
 			Usage:    "Channel ID (required for Slack)",
 			BodyPath: "channel",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "connection",
 			Usage:    "Connection ID. If omitted, auto-resolved from provider + user.",
 			BodyPath: "connection",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "parent",
 			Usage:    "Parent message ID for threading (thread_ts for Slack)",
 			BodyPath: "parent",
@@ -99,8 +98,6 @@ func handleActionsAddReaction(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.ActionAddReactionParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -111,6 +108,8 @@ func handleActionsAddReaction(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := hyperspell.ActionAddReactionParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -121,8 +120,15 @@ func handleActionsAddReaction(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "actions add-reaction", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "actions add-reaction",
+		Transform:      transform,
+	})
 }
 
 func handleActionsSendMessage(ctx context.Context, cmd *cli.Command) error {
@@ -132,8 +138,6 @@ func handleActionsSendMessage(ctx context.Context, cmd *cli.Command) error {
 	if len(unusedArgs) > 0 {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
-
-	params := hyperspell.ActionSendMessageParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -146,6 +150,8 @@ func handleActionsSendMessage(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
+	params := hyperspell.ActionSendMessageParams{}
+
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
 	_, err = client.Actions.SendMessage(ctx, params, options...)
@@ -155,6 +161,13 @@ func handleActionsSendMessage(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "actions send-message", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "actions send-message",
+		Transform:      transform,
+	})
 }
