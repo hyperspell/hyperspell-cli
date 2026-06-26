@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/hyperspell/hyperspell-cli/compare/v0.1.0...v0.2.0) (2026-06-26)
+
+
+### Features
+
+* migrate SDK release automation to release-please (off Stainless) ([#4](https://github.com/hyperspell/hyperspell-cli/issues/4)) ([212a4f7](https://github.com/hyperspell/hyperspell-cli/commit/212a4f72c72d560fe26643655a4991d231783fb9))
+
 ## 0.1.0 (2026-04-02)
 
 Full Changelog: [v0.0.1...v0.1.0](https://github.com/hyperspell/hyperspell-cli/compare/v0.0.1...v0.1.0)
