@@ -5,7 +5,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/hyperspell/hyperspell-cli/internal/apiquery"
 	"github.com/hyperspell/hyperspell-cli/internal/requestflag"
@@ -21,10 +20,11 @@ var foldersList = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "connection-id",
-			Required: true,
+			Name:      "connection-id",
+			Required:  true,
+			PathParam: "connection_id",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:      "parent-id",
 			Usage:     "Parent folder ID. Omit for root-level folders.",
 			QueryPath: "parent_id",
@@ -40,12 +40,14 @@ var foldersDeletePolicy = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "connection-id",
-			Required: true,
+			Name:      "connection-id",
+			Required:  true,
+			PathParam: "connection_id",
 		},
 		&requestflag.Flag[string]{
-			Name:     "policy-id",
-			Required: true,
+			Name:      "policy-id",
+			Required:  true,
+			PathParam: "policy_id",
 		},
 	},
 	Action:          handleFoldersDeletePolicy,
@@ -58,8 +60,9 @@ var foldersListPolicies = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "connection-id",
-			Required: true,
+			Name:      "connection-id",
+			Required:  true,
+			PathParam: "connection_id",
 		},
 	},
 	Action:          handleFoldersListPolicies,
@@ -72,8 +75,9 @@ var foldersSetPolicies = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "connection-id",
-			Required: true,
+			Name:      "connection-id",
+			Required:  true,
+			PathParam: "connection_id",
 		},
 		&requestflag.Flag[string]{
 			Name:     "provider-folder-id",
@@ -87,17 +91,17 @@ var foldersSetPolicies = cli.Command{
 			Required: true,
 			BodyPath: "sync_mode",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "folder-name",
 			Usage:    "Display name of the folder",
 			BodyPath: "folder_name",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "folder-path",
 			Usage:    "Display path of the folder",
 			BodyPath: "folder_path",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "parent-folder-id",
 			Usage:    "Parent folder's provider ID for inheritance resolution",
 			BodyPath: "parent_folder_id",
@@ -118,8 +122,6 @@ func handleFoldersList(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.FolderListParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -130,6 +132,8 @@ func handleFoldersList(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := hyperspell.FolderListParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -145,8 +149,15 @@ func handleFoldersList(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "folders list", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "folders list",
+		Transform:      transform,
+	})
 }
 
 func handleFoldersDeletePolicy(ctx context.Context, cmd *cli.Command) error {
@@ -160,10 +171,6 @@ func handleFoldersDeletePolicy(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.FolderDeletePolicyParams{
-		ConnectionID: cmd.Value("connection-id").(string),
-	}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -173,6 +180,10 @@ func handleFoldersDeletePolicy(ctx context.Context, cmd *cli.Command) error {
 	)
 	if err != nil {
 		return err
+	}
+
+	params := hyperspell.FolderDeletePolicyParams{
+		ConnectionID: cmd.Value("connection-id").(string),
 	}
 
 	var res []byte
@@ -189,8 +200,15 @@ func handleFoldersDeletePolicy(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "folders delete-policy", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "folders delete-policy",
+		Transform:      transform,
+	})
 }
 
 func handleFoldersListPolicies(ctx context.Context, cmd *cli.Command) error {
@@ -224,8 +242,15 @@ func handleFoldersListPolicies(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "folders list-policies", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "folders list-policies",
+		Transform:      transform,
+	})
 }
 
 func handleFoldersSetPolicies(ctx context.Context, cmd *cli.Command) error {
@@ -239,8 +264,6 @@ func handleFoldersSetPolicies(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.FolderSetPoliciesParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -251,6 +274,8 @@ func handleFoldersSetPolicies(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := hyperspell.FolderSetPoliciesParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -266,6 +291,13 @@ func handleFoldersSetPolicies(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "folders set-policies", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "folders set-policies",
+		Transform:      transform,
+	})
 }

@@ -5,7 +5,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/hyperspell/hyperspell-cli/internal/apiquery"
 	"github.com/hyperspell/hyperspell-cli/internal/requestflag"
@@ -26,7 +25,7 @@ var integrationsSlackList = cli.Command{
 			Default:   []string{},
 			QueryPath: "channels",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*bool]{
 			Name:      "exclude-archived",
 			Usage:     "If set, pass 'exclude_archived' to Slack. If None, omit the param.",
 			QueryPath: "exclude_archived",
@@ -62,8 +61,6 @@ func handleIntegrationsSlackList(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := hyperspell.IntegrationSlackListParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -75,6 +72,8 @@ func handleIntegrationsSlackList(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
+	params := hyperspell.IntegrationSlackListParams{}
+
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
 	_, err = client.Integrations.Slack.List(ctx, params, options...)
@@ -84,6 +83,13 @@ func handleIntegrationsSlackList(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "integrations:slack list", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "integrations:slack list",
+		Transform:      transform,
+	})
 }
