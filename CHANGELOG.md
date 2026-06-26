@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0 (2026-06-26)
+
+Full Changelog: [v0.2.0...v0.3.0](https://github.com/hyperspell/hyperspell-cli/compare/v0.2.0...v0.3.0)
+
+### Features
+
+* better error message if scheme forgotten in CLI `*_BASE_URL`/`--base-url` ([014299f](https://github.com/hyperspell/hyperspell-cli/commit/014299ffc8200eb78b23046cf5b33f6788559efa))
+
 ## [0.2.0](https://github.com/hyperspell/hyperspell-cli/compare/v0.1.0...v0.2.0) (2026-06-26)
 
 
