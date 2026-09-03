@@ -119,14 +119,6 @@ func init() {
 				},
 			},
 			{
-				Name:     "integrations:google-calendar",
-				Category: "API RESOURCE",
-				Suggest:  true,
-				Commands: []*cli.Command{
-					&integrationsGoogleCalendarList,
-				},
-			},
-			{
 				Name:     "integrations:web-crawler",
 				Category: "API RESOURCE",
 				Suggest:  true,
@@ -135,11 +127,24 @@ func init() {
 				},
 			},
 			{
-				Name:     "integrations:slack",
+				Name:     "entities",
 				Category: "API RESOURCE",
 				Suggest:  true,
 				Commands: []*cli.Command{
-					&integrationsSlackList,
+					&entitiesList,
+					&entitiesGet,
+					&entitiesSearch,
+				},
+			},
+			{
+				Name:     "live",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&liveGetResource,
+					&liveListResources,
+					&liveListSources,
+					&liveSearch,
 				},
 			},
 			{

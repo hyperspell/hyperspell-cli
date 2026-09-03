@@ -1,28 +1,52 @@
 name: Setup Go
-description: 'Sets up Go environment with private modules'
+description: 'Sets up Go environment'
 inputs:
-  stainless-api-key:
+  go-repo-deploy-key:
     required: false
-    description: the value of the STAINLESS_API_KEY secret
+    description: read-only SSH deploy key for a private Go SDK repository
+  go-version:
+    required: false
+    description: version or version range of Go to use
+  cache-dependency-path:
+    required: false
+    description: path to dependency files for caching
 runs:
   using: composite
   steps:
-    - uses: stainless-api/retrieve-github-access-token@v1
-      if: github.repository == 'stainless-sdks/hyperspell-cli'
-      id: get_token
-      with:
-        repo: stainless-sdks/hyperspell-go
-        stainless-api-key: ${{ inputs.stainless-api-key }}
-
-    - name: Configure Git for access to the Go SDK's staging repo
-      if: github.repository == 'stainless-sdks/hyperspell-cli'
+    - name: Configure access to a private Go SDK module
+      if: inputs.go-repo-deploy-key != ''
       shell: bash
-      run: git config --global url."https://x-access-token:${{ steps.get_token.outputs.github_access_token }}@github.com/stainless-sdks/hyperspell-go".insteadOf "https://github.com/stainless-sdks/hyperspell-go"
+      env:
+        GO_MODULE_REPO: ${{ github.repository == 'hyperspell/hyperspell-cli-staging' && 'hyperspell/hyperspell-go-staging' || 'hyperspell/hyperspell-go' }}
+        GO_REPO_DEPLOY_KEY: ${{ inputs.go-repo-deploy-key }}
+      run: |
+        ssh_dir="$RUNNER_TEMP/go-sdk-ssh"
+        key_file="$ssh_dir/deploy-key"
+        known_hosts_file="$ssh_dir/known-hosts"
+        install -d -m 700 "$ssh_dir"
+        printf '%s\n' "$GO_REPO_DEPLOY_KEY" > "$key_file"
+        chmod 600 "$key_file"
+        ssh-keyscan -H github.com > "$known_hosts_file"
+        git config --global core.sshCommand "ssh -i $key_file -o IdentitiesOnly=yes -o UserKnownHostsFile=$known_hosts_file"
+        git config --global url."git@github.com:${GO_MODULE_REPO}".insteadOf "https://github.com/${GO_MODULE_REPO}"
+
+    - name: Verify Go SDK module is accessible
+      shell: bash
+      env:
+        GO_MODULE_REPO: ${{ github.repository == 'hyperspell/hyperspell-cli-staging' && 'hyperspell/hyperspell-go-staging' || 'hyperspell/hyperspell-go' }}
+      run: |
+        if ! git ls-remote --exit-code "https://github.com/${GO_MODULE_REPO}" >/dev/null 2>&1; then
+          echo "::error::Cannot access the Go SDK module at https://github.com/${GO_MODULE_REPO}."
+          echo "::error::If the repo is private, add a read-only deploy key as the GO_REPO_DEPLOY_KEY Actions secret."
+          exit 1
+        fi
 
     - name: Setup go
-      uses: actions/setup-go@v5
+      uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
       with:
+        go-version: ${{ inputs.go-version }}
         go-version-file: ./go.mod
+        cache-dependency-path: ${{ inputs.cache-dependency-path }}
 
     - name: Bootstrap
       shell: bash

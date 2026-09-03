@@ -58,6 +58,7 @@ func TestMemoriesList(t *testing.T) {
 			"--collection", "collection",
 			"--cursor", "cursor",
 			"--filter", "filter",
+			"--include-chunks", "0",
 			"--size", "0",
 			"--source", "reddit",
 			"--status", "pending",
@@ -176,6 +177,7 @@ func TestMemoriesGet(t *testing.T) {
 			"memories", "get",
 			"--source", "reddit",
 			"--resource-id", "resource_id",
+			"--include-chunks=true",
 		)
 	})
 }
@@ -191,7 +193,7 @@ func TestMemoriesSearch(t *testing.T) {
 			"--answer=true",
 			"--effort", "minimal",
 			"--max-results", "1",
-			"--options", "{after: '2019-12-27T18:11:19.117Z', answer_model: llama-3.1, before: '2019-12-27T18:11:19.117Z', box: {weight: 0}, filter: {}, google_calendar: {calendar_id: calendar_id, weight: 0}, google_drive: {weight: 0}, google_mail: {label_ids: [string], weight: 0}, max_results: 1, memory_types: [procedure], notion: {notion_page_ids: [string], weight: 0}, recency_half_life_days: 1, resource_ids: [string], slack: {channels: [string], exclude_archived: true, include_dms: true, include_group_dms: true, include_private: true, weight: 0}, vault: {weight: 0}, web_crawler: {max_depth: 0, url: url, weight: 0}}",
+			"--options", "{after: '2019-12-27T18:11:19.117Z', answer_model: llama-3.1, before: '2019-12-27T18:11:19.117Z', filter: {}, google_drive: {weight: 0}, google_mail: {label_ids: [string], weight: 0}, max_results: 1, memory_types: [procedure], notion: {notion_page_ids: [string], weight: 0}, recency_half_life_days: 1, resource_ids: [string], slack: {channels: [string], exclude_archived: true, include_dms: true, include_group_dms: true, include_private: true, weight: 0}, timezone: timezone, vault: {weight: 0}, web_crawler: {max_depth: 0, url: url, weight: 0}}",
 			"--provenance=true",
 			"--source", "vault",
 		)
@@ -214,9 +216,7 @@ func TestMemoriesSearch(t *testing.T) {
 			"--options.after", "2019-12-27T18:11:19.117Z",
 			"--options.answer-model", "llama-3.1",
 			"--options.before", "2019-12-27T18:11:19.117Z",
-			"--options.box", "{weight: 0}",
 			"--options.filter", "{}",
-			"--options.google-calendar", "{calendar_id: calendar_id, weight: 0}",
 			"--options.google-drive", "{weight: 0}",
 			"--options.google-mail", "{label_ids: [string], weight: 0}",
 			"--options.max-results", "1",
@@ -225,6 +225,7 @@ func TestMemoriesSearch(t *testing.T) {
 			"--options.recency-half-life-days", "1",
 			"--options.resource-ids", "[string]",
 			"--options.slack", "{channels: [string], exclude_archived: true, include_dms: true, include_group_dms: true, include_private: true, weight: 0}",
+			"--options.timezone", "timezone",
 			"--options.vault", "{weight: 0}",
 			"--options.web-crawler", "{max_depth: 0, url: url, weight: 0}",
 			"--provenance=true",
@@ -243,12 +244,7 @@ func TestMemoriesSearch(t *testing.T) {
 			"  after: '2019-12-27T18:11:19.117Z'\n" +
 			"  answer_model: llama-3.1\n" +
 			"  before: '2019-12-27T18:11:19.117Z'\n" +
-			"  box:\n" +
-			"    weight: 0\n" +
 			"  filter: {}\n" +
-			"  google_calendar:\n" +
-			"    calendar_id: calendar_id\n" +
-			"    weight: 0\n" +
 			"  google_drive:\n" +
 			"    weight: 0\n" +
 			"  google_mail:\n" +
@@ -273,6 +269,7 @@ func TestMemoriesSearch(t *testing.T) {
 			"    include_group_dms: true\n" +
 			"    include_private: true\n" +
 			"    weight: 0\n" +
+			"  timezone: timezone\n" +
 			"  vault:\n" +
 			"    weight: 0\n" +
 			"  web_crawler:\n" +

@@ -15,26 +15,29 @@ on:
       - 'stl-preview-base/**'
 
 env:
-  GOPRIVATE: github.com/hyperspell/hyperspell-go,github.com/stainless-sdks/hyperspell-go
+  GOPRIVATE: github.com/hyperspell/hyperspell-go,github.com/hyperspell/hyperspell-go-staging
 
 jobs:
   lint:
     timeout-minutes: 10
     name: lint
-    runs-on: ${{ github.repository == 'stainless-sdks/hyperspell-cli' && 'depot-ubuntu-24.04' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     if: (github.event_name == 'push' || github.event.pull_request.head.repo.fork) && (github.event_name != 'push' || github.event.head_commit.message != 'codegen metadata')
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
+      # If the selected Go SDK repo is private, store a read-only deploy key in
+      # the `GO_REPO_DEPLOY_KEY` Actions secret. The setup action configures
+      # that key before checking or downloading the module (${{ github.repository == 'hyperspell/hyperspell-cli-staging' && 'hyperspell/hyperspell-go-staging' || 'hyperspell/hyperspell-go' }}).
       - uses: ./.github/actions/setup-go
         with:
-          stainless-api-key: ${{ secrets.STAINLESS_API_KEY }}
+          go-repo-deploy-key: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.GO_REPO_DEPLOY_KEY || '' }}
 
       - name: Link staging branch
-        if: github.repository == 'stainless-sdks/hyperspell-cli'
+        if: github.repository == 'hyperspell/hyperspell-cli-staging'
         run: |
-          ./scripts/link 'github.com/stainless-sdks/hyperspell-go@${{ github.ref_name }}' || true
+          ./scripts/link 'github.com/hyperspell/hyperspell-go-staging@${{ github.ref_name }}' || true
 
       - name: Bootstrap
         run: ./scripts/bootstrap
@@ -47,67 +50,58 @@ jobs:
     name: build
     permissions:
       contents: read
-      id-token: write
-    runs-on: ${{ github.repository == 'stainless-sdks/hyperspell-cli' && 'depot-ubuntu-24.04' || 'ubuntu-latest' }}
+
+    runs-on: ubuntu-latest
     if: (github.event_name == 'push' || github.event.pull_request.head.repo.fork) && (github.event_name != 'push' || github.event.head_commit.message != 'codegen metadata')
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
+      # If the selected Go SDK repo is private, store a read-only deploy key in
+      # the `GO_REPO_DEPLOY_KEY` Actions secret. The setup action configures
+      # that key before checking or downloading the module (${{ github.repository == 'hyperspell/hyperspell-cli-staging' && 'hyperspell/hyperspell-go-staging' || 'hyperspell/hyperspell-go' }}).
       - uses: ./.github/actions/setup-go
         with:
-          stainless-api-key: ${{ secrets.STAINLESS_API_KEY }}
+          go-repo-deploy-key: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.GO_REPO_DEPLOY_KEY || '' }}
 
       - name: Link staging branch
-        if: github.repository == 'stainless-sdks/hyperspell-cli'
+        if: github.repository == 'hyperspell/hyperspell-cli-staging'
         run: |
-          ./scripts/link 'github.com/stainless-sdks/hyperspell-go@${{ github.ref_name }}' || true
+          ./scripts/link 'github.com/hyperspell/hyperspell-go-staging@${{ github.ref_name }}' || true
 
       - name: Bootstrap
         run: ./scripts/bootstrap
 
       - name: Run goreleaser
-        uses: goreleaser/goreleaser-action@v6.1.0
+        uses: goreleaser/goreleaser-action@9ed2f89a662bf1735a48bc8557fd212fa902bebf # v6.1.0
         with:
           version: latest
           args: release --snapshot --clean --skip=publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Get GitHub OIDC Token
-        if: |-
-          github.repository == 'stainless-sdks/hyperspell-cli' &&
-          !startsWith(github.ref, 'refs/heads/stl/')
-        id: github-oidc
-        uses: actions/github-script@v8
-        with:
-          script: core.setOutput('github_token', await core.getIDToken());
 
-      - name: Upload tarball
-        if: |-
-          github.repository == 'stainless-sdks/hyperspell-cli' &&
-          !startsWith(github.ref, 'refs/heads/stl/')
-        env:
-          URL: https://pkg.stainless.com/s
-          AUTH: ${{ steps.github-oidc.outputs.github_token }}
-          SHA: ${{ github.sha }}
-        run: ./scripts/utils/upload-artifact.sh
+
+
 
   test:
     timeout-minutes: 10
     name: test
-    runs-on: ${{ github.repository == 'stainless-sdks/hyperspell-cli' && 'depot-ubuntu-24.04' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     if: github.event_name == 'push' || github.event.pull_request.head.repo.fork
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
+      # If the selected Go SDK repo is private, store a read-only deploy key in
+      # the `GO_REPO_DEPLOY_KEY` Actions secret. The setup action configures
+      # that key before checking or downloading the module (${{ github.repository == 'hyperspell/hyperspell-cli-staging' && 'hyperspell/hyperspell-go-staging' || 'hyperspell/hyperspell-go' }}).
       - uses: ./.github/actions/setup-go
         with:
-          stainless-api-key: ${{ secrets.STAINLESS_API_KEY }}
+          go-repo-deploy-key: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.GO_REPO_DEPLOY_KEY || '' }}
 
       - name: Link staging branch
-        if: github.repository == 'stainless-sdks/hyperspell-cli'
+        if: github.repository == 'hyperspell/hyperspell-cli-staging'
         run: |
-          ./scripts/link 'github.com/stainless-sdks/hyperspell-go@${{ github.ref_name }}' || true
+          ./scripts/link 'github.com/hyperspell/hyperspell-go-staging@${{ github.ref_name }}' || true
 
       - name: Bootstrap
         run: ./scripts/bootstrap

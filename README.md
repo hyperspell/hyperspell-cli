@@ -56,6 +56,7 @@ hyperspell [resource] <command> [flags...]
 ```sh
 hyperspell memories add \
   --api-key 'My API Key' \
+  --user-id 'My User ID' \
   --text ...
 ```
 

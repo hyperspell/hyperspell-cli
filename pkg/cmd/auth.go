@@ -16,7 +16,7 @@ import (
 
 var authDeleteUser = cli.Command{
 	Name:            "delete-user",
-	Usage:           "Endpoint to delete user.",
+	Usage:           "Delete the calling user's data (GDPR erasure).",
 	Suggest:         true,
 	Flags:           []cli.Flag{},
 	Action:          handleAuthDeleteUser,
@@ -44,7 +44,7 @@ var authUserToken = cli.Command{
 		},
 		&requestflag.Flag[*string]{
 			Name:     "expires-in",
-			Usage:    "Token lifetime, e.g., '30m', '2h', '1d'. Defaults to 24 hours if not provided.",
+			Usage:    "Token lifetime, e.g., '30m', '2h', '1d'. Defaults to 24 hours if not provided. Maximum 30 days.",
 			BodyPath: "expires_in",
 		},
 		&requestflag.Flag[*string]{

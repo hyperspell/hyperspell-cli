@@ -17,7 +17,7 @@ func TestActionsAddReaction(t *testing.T) {
 			"actions", "add-reaction",
 			"--channel", "channel",
 			"--name", "name",
-			"--provider", "reddit",
+			"--provider", "slack",
 			"--timestamp", "timestamp",
 			"--connection", "connection",
 		)
@@ -28,7 +28,7 @@ func TestActionsAddReaction(t *testing.T) {
 		pipeData := []byte("" +
 			"channel: channel\n" +
 			"name: name\n" +
-			"provider: reddit\n" +
+			"provider: slack\n" +
 			"timestamp: timestamp\n" +
 			"connection: connection\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
@@ -47,7 +47,7 @@ func TestActionsSendMessage(t *testing.T) {
 			"--api-key", "string",
 			"--user-id", "string",
 			"actions", "send-message",
-			"--provider", "reddit",
+			"--provider", "slack",
 			"--text", "text",
 			"--channel", "channel",
 			"--connection", "connection",
@@ -58,7 +58,7 @@ func TestActionsSendMessage(t *testing.T) {
 	t.Run("piping data", func(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
-			"provider: reddit\n" +
+			"provider: slack\n" +
 			"text: text\n" +
 			"channel: channel\n" +
 			"connection: connection\n" +

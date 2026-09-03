@@ -21,7 +21,7 @@ var memoriesUpdate = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "source",
-			Usage:     `Allowed values: "reddit", "notion", "slack", "google_calendar", "google_mail", "box", "dropbox", "github", "google_drive", "vault", "web_crawler", "trace", "microsoft_teams", "gmail_actions", "granola", "fathom", "fireflies", "linear", "hubspot", "salesforce", "coda", "lightfield", "gong".`,
+			Usage:     `Allowed values: "reddit", "notion", "slack", "google_calendar", "google_mail", "imap", "google_meet", "box", "dropbox", "github", "gitlab", "google_drive", "vault", "web_crawler", "trace", "microsoft_outlook", "microsoft_teams", "granola", "fathom", "fireflies", "figma", "linear", "hubspot", "salesforce", "coda", "confluence", "jira", "metabase", "gong", "clickup", "lightfield", "pylon", "fellow", "odoo", "external_mcp".`,
 			Required:  true,
 			PathParam: "source",
 		},
@@ -85,6 +85,12 @@ var memoriesList = cli.Command{
 			QueryPath: "filter",
 		},
 		&requestflag.Flag[int64]{
+			Name:      "include-chunks",
+			Usage:     "When > 0, include up to this many extracted memories (chunks with summaries) per document in each item's `chunks` field, in document order. 0 (default) omits them.",
+			Default:   0,
+			QueryPath: "include_chunks",
+		},
+		&requestflag.Flag[int64]{
 			Name:      "size",
 			Default:   50,
 			QueryPath: "size",
@@ -110,12 +116,12 @@ var memoriesList = cli.Command{
 
 var memoriesDelete = cli.Command{
 	Name:    "delete",
-	Usage:   "Delete a memory and its associated chunks from the index.",
+	Usage:   "Delete a memory accessible to the authenticated credential.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "source",
-			Usage:     `Allowed values: "reddit", "notion", "slack", "google_calendar", "google_mail", "box", "dropbox", "github", "google_drive", "vault", "web_crawler", "trace", "microsoft_teams", "gmail_actions", "granola", "fathom", "fireflies", "linear", "hubspot", "salesforce", "coda", "lightfield", "gong".`,
+			Usage:     `Allowed values: "reddit", "notion", "slack", "google_calendar", "google_mail", "imap", "google_meet", "box", "dropbox", "github", "gitlab", "google_drive", "vault", "web_crawler", "trace", "microsoft_outlook", "microsoft_teams", "granola", "fathom", "fireflies", "figma", "linear", "hubspot", "salesforce", "coda", "confluence", "jira", "metabase", "gong", "clickup", "lightfield", "pylon", "fellow", "odoo", "external_mcp".`,
 			Required:  true,
 			PathParam: "source",
 		},
@@ -221,12 +227,12 @@ var memoriesAddBulk = requestflag.WithInnerFlags(cli.Command{
 
 var memoriesGet = cli.Command{
 	Name:    "get",
-	Usage:   "Retrieves a document by provider and resource_id, as a document-shaped response\ncarrying the full hyperdoc tree (ENG-2479 Phase 4).",
+	Usage:   "Retrieve a document by provider and resource ID, including its full hyperdoc\ntree.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "source",
-			Usage:     `Allowed values: "reddit", "notion", "slack", "google_calendar", "google_mail", "box", "dropbox", "github", "google_drive", "vault", "web_crawler", "trace", "microsoft_teams", "gmail_actions", "granola", "fathom", "fireflies", "linear", "hubspot", "salesforce", "coda", "lightfield", "gong".`,
+			Usage:     `Allowed values: "reddit", "notion", "slack", "google_calendar", "google_mail", "imap", "google_meet", "box", "dropbox", "github", "gitlab", "google_drive", "vault", "web_crawler", "trace", "microsoft_outlook", "microsoft_teams", "granola", "fathom", "fireflies", "figma", "linear", "hubspot", "salesforce", "coda", "confluence", "jira", "metabase", "gong", "clickup", "lightfield", "pylon", "fellow", "odoo", "external_mcp".`,
 			Required:  true,
 			PathParam: "source",
 		},
@@ -234,6 +240,12 @@ var memoriesGet = cli.Command{
 			Name:      "resource-id",
 			Required:  true,
 			PathParam: "resource_id",
+		},
+		&requestflag.Flag[bool]{
+			Name:      "include-chunks",
+			Usage:     "When true, include the document's extracted memories (chunks with summaries) in the `chunks` field, in document order.",
+			Default:   false,
+			QueryPath: "include_chunks",
 		},
 	},
 	Action:          handleMemoriesGet,
@@ -259,7 +271,7 @@ var memoriesSearch = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:     "effort",
-			Usage:    "How much compute to spend on retrieval. Mirrors the dial popularized by frontier-model APIs (OpenAI reasoning_effort, etc.). 'minimal' = verbatim single-shot retrieval (fastest). 'low' = LLM rewrites the query for better retrieval and extracts date filters. 'medium' = rewrite + agentic refinement loop (the answer LLM may request additional retrieval rounds, up to 3). 'high' = rewrite + extended refinement (up to 6 rounds). Higher = better recall, more latency, more cost.",
+			Usage:    "Controls retrieval thoroughness. 'minimal' performs direct retrieval. 'low' improves the query and extracts date filters. 'medium' adds up to 3 refinement rounds; 'high' allows up to 6. Higher levels can improve recall but add latency and cost.",
 			Default:  "minimal",
 			BodyPath: "effort",
 		},
@@ -276,13 +288,13 @@ var memoriesSearch = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[bool]{
 			Name:     "provenance",
-			Usage:    "If true (effort='very_high' only), attach a provenance record to the response: the source documents and entities the answer was grounded in, the agent's search trajectory, and any sources that failed. Adds one indexed lookup; intended for auditability / compliance use cases.",
+			Usage:    "If true (effort='very_high' only), attach a provenance record to the response: the source documents and entities the answer was grounded in, the agent's search trajectory, and any sources that failed. Intended for auditability and compliance use cases.",
 			Default:  false,
 			BodyPath: "provenance",
 		},
 		&requestflag.Flag[[]string]{
 			Name:     "source",
-			Usage:    "Only query documents from these sources.",
+			Usage:    "Only query documents from these sources. Names are case-insensitive and accept either separator, so `Google Drive`'s provider may be given as `google_drive`, `google-drive`, or `GOOGLE_DRIVE`.",
 			BodyPath: "sources",
 		},
 	},
@@ -306,19 +318,9 @@ var memoriesSearch = requestflag.WithInnerFlags(cli.Command{
 			InnerField: "before",
 		},
 		&requestflag.InnerFlag[map[string]any]{
-			Name:       "options.box",
-			Usage:      "Search options for Box",
-			InnerField: "box",
-		},
-		&requestflag.InnerFlag[map[string]any]{
 			Name:       "options.filter",
 			Usage:      "Metadata filters using MongoDB-style operators. Example: {'status': 'published', 'priority': {'$gt': 3}}",
 			InnerField: "filter",
-		},
-		&requestflag.InnerFlag[map[string]any]{
-			Name:       "options.google-calendar",
-			Usage:      "Search options for Google Calendar",
-			InnerField: "google_calendar",
 		},
 		&requestflag.InnerFlag[map[string]any]{
 			Name:       "options.google-drive",
@@ -359,6 +361,11 @@ var memoriesSearch = requestflag.WithInnerFlags(cli.Command{
 			Name:       "options.slack",
 			Usage:      "Search options for Slack",
 			InnerField: "slack",
+		},
+		&requestflag.InnerFlag[string]{
+			Name:       "options.timezone",
+			Usage:      "IANA timezone used to interpret date-only bounds and relative calendar phrases. Defaults to UTC.",
+			InnerField: "timezone",
 		},
 		&requestflag.InnerFlag[map[string]any]{
 			Name:       "options.vault",
