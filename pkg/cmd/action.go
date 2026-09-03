@@ -33,8 +33,9 @@ var actionsAddReaction = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:     "provider",
-			Usage:    "Integration provider (e.g., slack)",
-			Required: true,
+			Usage:    "Integration provider.",
+			Default:  "slack",
+			Const:    true,
 			BodyPath: "provider",
 		},
 		&requestflag.Flag[string]{
@@ -60,8 +61,9 @@ var actionsSendMessage = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:     "provider",
-			Usage:    "Integration provider (e.g., slack)",
-			Required: true,
+			Usage:    "Integration provider.",
+			Default:  "slack",
+			Const:    true,
 			BodyPath: "provider",
 		},
 		&requestflag.Flag[string]{
