@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.3.0](https://github.com/hyperspell/hyperspell-cli/compare/v0.2.0...v0.3.0) (2026-09-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* **api:** sync generated SDK from staging (removes google_calendar + slack list endpoints)
+
+### Features
+
+* **api:** sync generated SDK from staging (removes google_calendar + slack list endpoints) ([f33eb7d](https://github.com/hyperspell/hyperspell-cli/commit/f33eb7dab1e81d4a374bc4d4c766e70e102bdec4))
+
+
+### Bug Fixes
+
+* check the production release token ([#9](https://github.com/hyperspell/hyperspell-cli/issues/9)) ([b5efa64](https://github.com/hyperspell/hyperspell-cli/commit/b5efa647861d5bccbb4bcdbe2c3d68aeab70beed))
+
 ## [0.2.0](https://github.com/hyperspell/hyperspell-cli/compare/v0.1.0...v0.2.0) (2026-06-26)
 
 
